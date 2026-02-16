@@ -1,332 +1,47 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Accueil - Romain VRNX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'DM Sans', sans-serif;
-      background: #111;
-      color: #fff;
-      opacity: 0;
-      transition: opacity 1.2s ease-in;
-    }
-
-    body.loaded {
-      opacity: 1;
-    }
-
-    header {
-      background: #000;
-      padding: 1em 2em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    nav a {
-      color: #aaa;
-      margin-left: 20px;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    nav a:hover {
-      color: #fff;
-    }
-
-    main {
-      padding: 60px 20px;
-      max-width: 1000px;
-      margin: auto;
-      text-align: center;
-    }
-
-    .hero-container {
-      position: relative;
-      margin-bottom: 40px;
-      cursor: pointer;
-    }
-
-    .hero-img {
-      width: 100%;
-      max-height: 600px;
-      object-fit: cover;
-      object-position: center;
-      border-radius: 12px;
-      display: block;
-      transition: transform 0.6s ease, filter 0.6s ease, opacity 0.6s ease;
-      filter: blur(5px) grayscale(20%) brightness(85%);
-      opacity: 0;
-      transform: scale(1.05);
-      animation: cinematic-in 2.2s ease forwards;
-      z-index: 1;
-      position: relative;
-    }
-
-    .hero-light {
-      position: absolute;
-      bottom: -60px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 130%;
-      height: 180px;
-      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.35), transparent 75%);
-      border-radius: 50%;
-      filter: blur(60px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.6;
-    }
-
-    @keyframes cinematic-in {
-      0% {
-        opacity: 0;
-        filter: blur(6px) grayscale(40%) brightness(60%);
-        transform: scale(1.07);
-      }
-      100% {
-        opacity: 1;
-        filter: blur(0) grayscale(0) brightness(100%);
-        transform: scale(1);
-      }
-    }
-
-    p {
-      font-size: 18px;
-      color: #ccc;
-      max-width: 800px;
-      margin: 0 auto 40px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.8s ease;
-    }
-
-    .fade-in {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-
-    .see-work-btn {
-      display: inline-block;
-      padding: 18px 38px;
-      background: #fff;
-      color: #111;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 10px;
-      font-size: 20px;
-      margin-top: 30px;
-      transition: transform 0.3s ease, background 0.3s ease;
-      opacity: 0;
-      transform: translateY(20px);
-    }
-
-    .see-work-btn:hover {
-      background: #eee;
-      transform: scale(1.08);
-    }
-
-    .see-work-btn.fade-in {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-
-    .social-links {
-      margin-top: 60px;
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.8s ease;
-      flex-wrap: wrap;
-    }
-
-    .social-links.fade-in {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .social-links a {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-size: 1.2rem;
-      color: #fff;
-      text-decoration: none;
-      transition: transform 0.3s ease, color 0.3s ease;
-    }
-
-    .social-links a:hover {
-      color: #ff004f;
-      transform: scale(1.05);
-    }
-
-    .social-links i {
-      font-size: 1.5em;
-    }
-
-    footer {
-      margin-top: 80px;
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    /* Version mobile */
-    @media (max-width: 768px) {
-      main {
-        padding: 40px 15px;
-      }
-
-      .hero-img {
-        max-height: 360px;
-      }
-
-      .hero-light {
-        bottom: 0;
-        height: 200px;
-        width: 150%;
-        left: 50%;
-        transform: translateX(-50%);
-        background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.25), transparent 80%);
-        filter: blur(50px);
-        opacity: 0.6;
-      }
-
-      p {
-        font-size: 16px;
-        margin-bottom: 30px;
-      }
-
-      .see-work-btn {
-        font-size: 18px;
-        padding: 14px 30px;
-      }
-
-      .social-links {
-        gap: 20px;
-      }
-
-      .social-links a {
-        font-size: 1rem;
-      }
-
-      .social-links i {
-        font-size: 1.2em;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero-img {
-        max-height: 280px;
-      }
-
-      .see-work-btn {
-        width: 100%;
-        padding: 14px 0;
-      }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Romain VRNX | Visual Storyteller</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600&family=Cardo:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
   <header>
-    <div><strong>Romain VRNX</strong></div>
+    <div class="logo">ROMAIN VRNX<span>.</span></div>
     <nav>
-      <a href="index.html">Accueil</a>
+      <a href="index.html" class="active">Accueil</a>
       <a href="portfolio.html">Portfolio</a>
       <a href="contact.html">Contact</a>
     </nav>
   </header>
 
   <main>
-    <h1>Welcome to my vision of life</h1>
+    <section style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center;">
+      <h1>Capturing the<br><span>Untamed World</span></h1>
+      <p class="intro">
+        Vidéaste et photographe spécialisé dans l'imagerie sous-marine et la vie sauvage. 
+        Basé entre terre et mer, je raconte des histoires là où la lumière se fait rare.
+      </p>
+      
+      <div style="margin-top: 2rem;">
+        <a href="portfolio.html" class="btn">Explorer mes travaux</a>
+      </div>
+    </section>
 
-    <div class="hero-container scroll-fade" id="hero-container" tabindex="0" aria-label="Portrait de Romain, cliquez pour activer l'animation de lumière">
-      <img src="images/accueil.jpg" alt="Portrait Romain" class="hero-img" id="hero-img" />
-      <div class="hero-light" id="hero-light"></div>
-    </div>
+    </main>
 
-    <p class="scroll-fade">
-      I created my first videos at the age of 12, driven by a simple desire to create.
-      Around the same time, I discovered scuba diving thanks to my father — a passion that has stayed with me ever since.
-      Two years ago, I turned to photography and found the same intensity and sense of fulfillment.
-      My many travels, often solo, have helped shape my perspective and refine my artistic approach.
-      Today, I’m looking to take this journey to a professional level, with a focus on underwater photography.
-    </p>
-
-    <a href="portfolio.html" class="see-work-btn scroll-fade">See My Work</a>
-
-    <div class="social-links scroll-fade">
-      <a href="https://www.instagram.com/romainvrnx" target="_blank" rel="noopener noreferrer">
-        <i class="fab fa-instagram"></i> Instagram
-      </a>
-      <a href="https://youtube.com/@romainvrnx" target="_blank" rel="noopener noreferrer">
-        <i class="fab fa-youtube"></i> YouTube
-      </a>
-    </div>
-  </main>
-
-  <footer>
-    &copy; 2025 Romain VRNX — Tous droits réservés
+  <footer style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+    &copy; 2025 Romain VRNX. Tous droits réservés.
   </footer>
 
-  <script>
-    window.addEventListener("load", () => {
-      document.body.classList.add("loaded");
-    });
-
-    // Scroll fade in/out observer with reset when scrolling back to top
-    const fadeElements = document.querySelectorAll('.scroll-fade');
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('fade-in');
-        } else {
-          // Remove fade-in to allow re-animation when scrolling back up
-          if(window.scrollY < 100) {
-            entry.target.classList.remove('fade-in');
-          }
-        }
-      });
-    }, {
-      threshold: 0.2
-    });
-
-    fadeElements.forEach(el => observer.observe(el));
-
-    // Hero container click animation - pulse glow effect on hero-light
-    const heroContainer = document.getElementById('hero-container');
-    const heroLight = document.getElementById('hero-light');
-
-    heroContainer.addEventListener('click', () => {
-      heroLight.style.transition = 'none';
-      heroLight.style.opacity = '1';
-      heroLight.style.transform = 'translateX(-50%) scale(1.1)';
-      setTimeout(() => {
-        heroLight.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        heroLight.style.opacity = '0.6';
-        heroLight.style.transform = 'translateX(-50%) scale(1)';
-      }, 300);
-    });
-
-  </script>
 </body>
 </html>
