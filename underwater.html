@@ -1,112 +1,61 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Underwater - Romain VRNX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'DM Sans', sans-serif;
-      background: #111;
-      color: #fff;
-    }
-
-    header {
-      background: #000;
-      padding: 1em 2em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    nav a {
-      color: #aaa;
-      margin-left: 20px;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    nav a:hover {
-      color: #fff;
-    }
-
-    main {
-      max-width: 1200px;
-      margin: 80px auto 40px;
-      padding: 0 20px;
-      text-align: center;
-    }
-
-    h1 {
-      text-align: center;
-      font-weight: 700;
-      margin-bottom: 60px;
-      font-size: 48px;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .coming-soon {
-      font-size: 28px;
-      margin-top: 80px;
-      opacity: 0;
-      animation: fadeInUp 1.5s ease forwards, float 4s ease-in-out infinite;
-      color: rgba(255, 255, 255, 0.8);
-      letter-spacing: 2px;
-    }
-
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 32px;
-        letter-spacing: 5px;
-      }
-
-      .coming-soon {
-        font-size: 20px;
-      }
-    }
-  </style>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600&family=Cardo:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
   <header>
-    <div><strong>Romain VRNX</strong></div>
+    <div class="logo">ROMAIN VRNX<span>.</span></div>
     <nav>
       <a href="index.html">Accueil</a>
-      <a href="portfolio.html">Portfolio</a>
+      <a href="portfolio.html" class="active">Portfolio</a>
       <a href="contact.html">Contact</a>
     </nav>
   </header>
 
   <main>
-    <h1>UNDERWATER</h1>
-    <div class="coming-soon">Coming soon, stay tuned...</div>
+    <a href="portfolio.html" class="back-link">
+      <i class="fas fa-arrow-left"></i> Retour au Portfolio
+    </a>
+
+    <h1>Underwater <span>World</span></h1>
+    <p class="intro">
+      Plongée dans le silence bleu. Une collection de photographies capturées en apnée et en bouteille, révélant la faune cachée des océans.
+    </p>
+
+    <div class="photo-grid">
+      
+      <div class="photo-item">
+        <img src="https://res.cloudinary.com/dcdwmkjpj/image/upload/f_auto,q_auto:best,w_800/v1754212105/underwater_thumb_mfmwtc.jpg" alt="Tortue sous-marine">
+      </div>
+
+      <div class="photo-item">
+        <img src="https://res.cloudinary.com/dcdwmkjpj/image/upload/f_auto,q_auto:best,w_800/v1754212194/DSC08496.jpg" alt="Détail corail">
+      </div>
+
+      <div class="photo-item">
+        <img src="https://res.cloudinary.com/dcdwmkjpj/image/upload/f_auto,q_auto:best,w_800/v1754212233/travel_thumb_kch81y.jpg" alt="Rayons de lumière">
+      </div>
+
+      <div class="photo-item">
+        <img src="https://images.unsplash.com/photo-1544551763-46a875611267?q=80&w=1000&auto=format&fit=crop" alt="Requins (Exemple Unsplash)">
+      </div>
+
+    </div>
   </main>
+
+  <footer style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+    &copy; 2025 Romain VRNX.
+  </footer>
+
 </body>
 </html>
