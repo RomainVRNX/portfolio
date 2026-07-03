@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinematic Filmmaking — Romain VRNX</title>
+  <meta name="description" content="Cinematic filmmaking by Romain Vernay — Underwater documentaries, short films, and showreel. DaVinci Resolve color grading.">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header header--scrolled" id="header">
+    <a href="index.html" class="logo">ROMAIN VRNX<span>.</span></a>
+    <nav class="nav-desktop" id="nav-desktop">
+      <a href="index.html" class="nav-desktop__link">Home</a>
+      <a href="portfolio.html" class="nav-desktop__link nav-desktop__link--active">Portfolio</a>
+      <a href="contact.html" class="nav-desktop__link">Contact</a>
+    </nav>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <nav class="nav-mobile" id="nav-mobile">
+    <a href="index.html" class="nav-mobile__link">Home</a>
+    <a href="portfolio.html" class="nav-mobile__link">Portfolio</a>
+    <a href="contact.html" class="nav-mobile__link">Contact</a>
+  </nav>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero reveal" id="page-hero">
+    <div class="page-hero__inner">
+      <a href="portfolio.html" class="btn-back" id="btn-back-portfolio">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back</span>
+      </a>
+      <p class="page-hero__kicker">Portfolio · Filmmaking</p>
+      <h1 class="page-hero__title">Cinematic <em>Filmmaking</em></h1>
+      <div class="page-hero__divider"></div>
+      <p class="page-hero__desc">
+        Stories told through motion — underwater documentaries, travel narratives, and cinematic short films. 
+        Shot on Sony A7III, color graded in DaVinci Resolve with an Orange &amp; Teal signature look.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== SHOWREEL ===== -->
+  <section class="section" id="showreel-section">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <p class="section__kicker">Reel</p>
+        <h2 class="section__title">Show<em>reel</em></h2>
+      </div>
+
+      <div class="showreel reveal reveal-d1" id="showreel">
+        <div class="showreel__container">
+          <!-- Replace with your video embed or <video> tag -->
+          <video class="showreel__video" controls preload="metadata" poster="images/showreel-poster.webp">
+            <source src="images/showreel.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SELECTED PROJECTS ===== -->
+  <section class="section" id="film-projects">
+    <div class="section__inner">
+      <div class="section__header reveal">
+        <p class="section__kicker">Films</p>
+        <h2 class="section__title">Selected <em>Projects</em></h2>
+      </div>
+
+      <div class="work-grid reveal">
+
+        <!-- Project 1 -->
+        <article class="work-card" id="film-1">
+          <div class="work-card__thumb" style="background-image: url('images/film-moalboal.webp');">
+            <div class="work-card__play">
+              <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+            </div>
+          </div>
+          <div class="work-card__body">
+            <span class="work-card__tag">Documentary</span>
+            <h3 class="work-card__title">Beneath Moalboal</h3>
+            <p class="work-card__meta">Cebu, Philippines · 2026 · 12 min</p>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="work-card" id="film-2">
+          <div class="work-card__thumb" style="background-image: url('images/film-vietnam.webp');">
+            <div class="work-card__play">
+              <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+            </div>
+          </div>
+          <div class="work-card__body">
+            <span class="work-card__tag">Travel Film</span>
+            <h3 class="work-card__title">Rivers of Light</h3>
+            <p class="work-card__meta">Vietnam · 2025 · 8 min</p>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="work-card" id="film-3">
+          <div class="work-card__thumb" style="background-image: url('images/film-sardines.webp');">
+            <div class="work-card__play">
+              <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+            </div>
+          </div>
+          <div class="work-card__body">
+            <span class="work-card__tag">Short Film</span>
+            <h3 class="work-card__title">Sardine Run</h3>
+            <p class="work-card__meta">Moalboal · 2025 · 5 min</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer-full" id="footer">
+    <div class="footer-full__inner">
+      <div class="footer-full__socials">
+        <a href="#" aria-label="Instagram" class="footer-social" id="footer-ig"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" aria-label="YouTube" class="footer-social" id="footer-yt"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+      <p class="footer-full__copy">© 2026 ROMAIN VRNX<span>.</span></p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
