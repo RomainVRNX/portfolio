@@ -235,7 +235,7 @@ const SITE_CONFIG = {
         title: "A different chapter",
         text: "Life took me somewhere very different. The army became a huge part of who I am. It taught me discipline, resilience, and the importance of being someone people can rely on. But even then, the camera never stayed far away.",
         mediaType: "image",
-        mediaSrc: "images/RCA.jpg",
+        mediaSrc: "images/rca-army.jpg",
         mediaAlt: "A different chapter — army years",
         mediaLabel: "Photo — Equipment / Army",
         reversed: true
