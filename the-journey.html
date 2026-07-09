@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Journey — Romain Vernay</title>
+  <meta name="description" content="The journey of Romain Vernay — from land to sea, a life built around the ocean. Underwater filmmaker and photographer.">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Animation cinématique de la ligne de scroll */
+    @keyframes scrollLineAnim {
+      0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      30% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      70% { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+    .custom-scroll-line {
+      width: 1px;
+      height: 60px;
+      background-color: #2dd4bf; /* Ligne en Turquoise teal */
+      animation: scrollLineAnim 2s infinite ease-in-out;
+    }
+    .scene-separator {
+      display: flex;
+      justify-content: center;
+      padding: 40px 0; /* Respiration entre les cadres */
+    }
+    .scene-separator .custom-scroll-line {
+      height: 40px; /* Un peu plus court entre les chapitres */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header header--scrolled" id="header">
+    <a href="index.html" class="logo">ROMAIN VERNAY<span>.</span></a>
+    <nav class="nav-desktop" id="nav-desktop">
+      <a href="index.html" class="nav-desktop__link">Home</a>
+      <a href="portfolio.html" class="nav-desktop__link">Stories</a>
+      <a href="the-journey.html" class="nav-desktop__link nav-desktop__link--active">The Journey</a>
+      <a href="contact.html" class="nav-desktop__link">Contact</a>
+    </nav>
+    <div class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </div>
+  </header>
+
+  <nav class="nav-mobile" id="nav-mobile">
+    <a href="index.html" class="nav-mobile__link">Home</a>
+    <a href="portfolio.html" class="nav-mobile__link">Stories</a>
+    <a href="the-journey.html" class="nav-mobile__link">The Journey</a>
+    <a href="contact.html" class="nav-mobile__link">Contact</a>
+  </nav>
+
+  <!-- ===== BACK BUTTON ===== -->
+  <div style="padding-top: calc(var(--nav-h) + 2.5rem); padding-left: clamp(1.5rem, 4vw, 3rem); max-width: var(--max-w); margin: 0 auto;">
+    <a href="index.html" class="btn-back" id="btn-back-home" style="color: #2dd4bf;">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Back</span>
+    </a>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCROLLYTELLING — THE JOURNEY
+       ═══════════════════════════════════════════ -->
+
+  <div class="journey-wrapper" id="journey-wrapper">
+
+    <!-- ===== OPENING ===== -->
+    <section class="journey-opening" id="journey-opening" style="position: relative; height: 75vh; min-height: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #05080a;">
+      
+      <div class="journey-opening__inner reveal" id="journey-opening-content" style="position: static; width: 100%; margin-top: -60px;">
+      </div>
+
+      <!-- Indicateur Dive In : Texte en blanc transparent, ligne en teal -->
+      <div style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 16px; font-family: 'Cardo', serif; font-style: italic; font-size: 1.25rem; color: rgba(255, 255, 255, 0.6);">
+        <span>Dive in</span>
+        <div class="custom-scroll-line"></div>
+      </div>
+
+    </section>
+
+    <!-- ===== SCENES ===== -->
+    <div id="journey-scenes">
+    </div>
+
+    <!-- ===== FINALE ===== -->
+    <section class="journey-finale" id="scene-finale" style="overflow: visible; padding-bottom: 80px;">
+      <div class="journey-finale__inner reveal" id="journey-finale-content">
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== CONTACT STRIP ===== -->
+  <section class="contact-strip reveal" id="journey-cta">
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer-full" id="footer">
+    <div class="footer-full__inner">
+      <div class="footer-full__socials">
+        <a href="#" aria-label="Instagram" class="footer-social" id="footer-ig"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" aria-label="YouTube" class="footer-social" id="footer-yt"><i class="fa-brands fa-youtube"></i></a>
+      </div>
+      <p class="footer-full__copy">© 2026 ROMAIN VERNAY<span>.</span></p>
+    </div>
+  </footer>
+
+  <script src="site-config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
