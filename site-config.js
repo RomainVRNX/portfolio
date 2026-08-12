@@ -38,7 +38,7 @@ const SITE_CONFIG = {
   homeProjects: [
     {
       title: "Pull me out of this",
-      tag: "Film",
+      tag: "Short Film",
       meta: "Philippines · Feb 2025",
       thumbnail: "images/videophyt.jpg",
       link: "https://www.youtube.com/watch?v=78xQUpdfYx8"
