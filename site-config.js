@@ -40,8 +40,8 @@ const SITE_CONFIG = {
       title: "Pull me out of this",
       tag: "Film",
       meta: "Philippines · Feb 2025",
-      thumbnail: "images/project-moalboal.webp",
-      link: "#"
+      thumbnail: "images/videophyt.jpg",
+      link: "https://www.youtube.com/watch?v=78xQUpdfYx8"
     },
     {
       title: "Beauty of Vietnam",
