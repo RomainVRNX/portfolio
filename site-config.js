@@ -213,7 +213,7 @@ const SITE_CONFIG = {
         title: "Today",
         text: "Today, I’m building a life around the ocean. One story. One dive. One encounter at a time. I don’t know exactly where this journey will lead. That’s probably my favorite part.",
         mediaType: "image",
-        mediaSrc: "",
+        mediaSrc: "images/diving-ro.jpeg",
         mediaAlt: "Today — building a life around the ocean",
         mediaLabel: "Photo — Gear / Behind the scenes",
         reversed: true
