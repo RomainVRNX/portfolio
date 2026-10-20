@@ -88,16 +88,16 @@ const SITE_CONFIG = {
      Sélection restreinte et pointue.
   */
   editorialExpeditions: [
-    { src: "images/PUGLIA/DSC01075.jpg", alt: "Puglia — Coastal village", size: "wide" },
-    { src: "images/SRI LANKA/DSC04388.jpg", alt: "Sri Lanka — Landscape", size: "normal" },
-    { src: "images/TREK/DSC07207.jpg", alt: "Trek — Summit", size: "tall" },
-    { src: "images/PUGLIA/DSC01214.jpg", alt: "Puglia — Olive groves", size: "normal" },
-    { src: "images/SRI LANKA/DSC04562.jpg", alt: "Sri Lanka — Tea plantation", size: "tall" },
+    { src: "images/DSC09957.jpg", alt: "Vietnam - Child Portrait", size: "normal" },
+    { src: "images/dr_ph3.jpg", alt: "Philippines - Drone", size: "tall" },
+    { src: "images/TREK/DSC07630.jpg", alt: "Milky way", size: "normal" },
+    { src: "images/DSC00814.jpg", alt: "Thailand", size: "tall" },
+    { src: "images/DSC00459.jpg", alt: "Muay Thai", size: "tall" },
     { src: "images/BIRDS/DSC04297.jpg", alt: "Wildlife — Bird portrait", size: "normal" },
     { src: "images/TREK/DJI_0315.jpg", alt: "Trek — Aerial view", size: "wide" },
-    { src: "images/SRI LANKA/DSC05130.jpg", alt: "Sri Lanka — Train", size: "tall" },
-    { src: "images/PUGLIA/DSC01346.jpg", alt: "Puglia — Streets", size: "normal" },
-    { src: "images/BIRDS/DSC05813.jpg", alt: "Wildlife — Bird perching", size: "wide" }
+    { src: "images/DJI_0314.jpg", alt: "Vietnam - Ninh Binh", size: "tall" },
+    { src: "images/PUGLIA/DSC01214.jpg", alt: "Puglia — Fisherman", size: "normal" },
+    { src: "images/BIRDS/DSC08496.jpg", alt: "Wildlife", size: "wide" }
   ],
 
 
