@@ -2951,3 +2951,121 @@ button, input, textarea {
   }
 }
 
+
+
+/* ===== Portfolio editorial refinements — 2026 ===== */
+.page-photography .editorial-section__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: .8rem;
+  margin: 0 auto clamp(2.5rem, 5vw, 4.5rem);
+}
+.page-photography .editorial-section__eyebrow {
+  font-family: var(--font-body);
+  color: var(--teal);
+  font-size: .68rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.page-photography .editorial-section__title {
+  font-size: clamp(2.1rem, 5vw, 4.2rem);
+  font-style: normal;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+}
+.page-photography .editorial-section__title em {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--teal);
+}
+.page-photography .editorial-section__subtitle {
+  color: var(--grey);
+  font-size: clamp(.78rem, 1.2vw, .9rem);
+  letter-spacing: .04em;
+}
+.page-photography .editorial-section__line {
+  margin: .4rem auto 0;
+  width: 56px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent);
+}
+.page-photography .editorial-section + .editorial-section {
+  padding-top: clamp(3rem, 6vw, 6rem);
+}
+.page-photography .editorial-section {
+  scroll-margin-top: calc(var(--nav-h) + 1rem);
+}
+.page-photography .masonry__item img,
+.page-second-home .masonry__item img {
+  min-height: 0;
+  height: auto;
+  object-fit: contain;
+}
+.page-second-home .project-intro {
+  max-width: 760px;
+  margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+  text-align: center;
+}
+.page-second-home .project-intro__description {
+  margin: 0 auto;
+  color: var(--grey);
+  line-height: 1.8;
+  max-width: 650px;
+  font-size: .95rem;
+}
+.page-second-home .project-cover {
+  max-width: var(--max-w);
+  margin: 0 auto clamp(2.5rem, 6vw, 5rem);
+  padding: 0 clamp(1rem, 4vw, 3rem);
+}
+.page-second-home .project-cover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius);
+}
+.page-second-home .masonry {
+  margin-bottom: 2rem;
+}
+#selected-work .work-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+#selected-work .work-card__thumb {
+  aspect-ratio: 3 / 2;
+}
+#selected-work .work-card__tag {
+  background: transparent;
+  color: var(--teal);
+  padding: 0;
+  border-radius: 0;
+  letter-spacing: .13em;
+}
+#selected-work .work-card__body {
+  padding: 1.05rem .3rem 0;
+}
+#selected-work .work-card {
+  background: transparent;
+}
+#selected-work .work-card:hover {
+  box-shadow: none;
+  transform: translateY(-3px);
+}
+#selected-work .work-card__title {
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  margin-bottom: .35rem;
+}
+@media (max-width: 768px) {
+  #selected-work .work-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .page-photography .editorial-section__header {
+    margin-bottom: 2rem;
+    gap: .6rem;
+  }
+  .page-photography .editorial-section__title {
+    font-size: clamp(2rem, 8vw, 2.9rem);
+  }
+}
