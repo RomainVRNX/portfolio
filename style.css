@@ -2959,37 +2959,21 @@ button, input, textarea {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: .8rem;
-  margin: 0 auto clamp(2.5rem, 5vw, 4.5rem);
-}
-.page-photography .editorial-section__eyebrow {
-  font-family: var(--font-body);
-  color: var(--teal);
-  font-size: .68rem;
-  letter-spacing: .24em;
-  text-transform: uppercase;
+  margin: 0 auto clamp(2.4rem, 5vw, 4rem);
 }
 .page-photography .editorial-section__title {
-  font-size: clamp(2.1rem, 5vw, 4.2rem);
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 4.6vw, 3.8rem);
+  font-weight: 400;
   font-style: normal;
-  line-height: 1.12;
-  letter-spacing: -.025em;
+  line-height: 1.14;
+  letter-spacing: -.018em;
+  text-wrap: balance;
 }
 .page-photography .editorial-section__title em {
   font-weight: 400;
   font-style: italic;
   color: var(--teal);
-}
-.page-photography .editorial-section__subtitle {
-  color: var(--grey);
-  font-size: clamp(.78rem, 1.2vw, .9rem);
-  letter-spacing: .04em;
-}
-.page-photography .editorial-section__line {
-  margin: .4rem auto 0;
-  width: 56px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--teal), transparent);
 }
 .page-photography .editorial-section + .editorial-section {
   padding-top: clamp(3rem, 6vw, 6rem);
@@ -3067,5 +3051,70 @@ button, input, textarea {
   }
   .page-photography .editorial-section__title {
     font-size: clamp(2rem, 8vw, 2.9rem);
+  }
+}
+
+/* Photography / commissioned projects — clear navigation to case studies */
+.page-photography .commission-feature {
+  display: block;
+  max-width: 1000px;
+  margin: 0 auto;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.page-photography .commission-feature__image {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.page-photography .commission-feature__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .45s ease;
+}
+.page-photography .commission-feature:hover .commission-feature__image img,
+.page-photography .commission-feature:focus-visible .commission-feature__image img {
+  transform: scale(1.025);
+}
+.page-photography .commission-feature__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 1rem;
+}
+.page-photography .commission-feature__title {
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.4vw, 1.85rem);
+  font-weight: 400;
+  margin-bottom: .25rem;
+}
+.page-photography .commission-feature__meta {
+  color: var(--grey);
+  font-size: .82rem;
+}
+.page-photography .commission-feature__link {
+  color: var(--teal);
+  font-size: .82rem;
+  white-space: nowrap;
+}
+.page-photography .commission-feature:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 5px;
+  border-radius: var(--radius);
+}
+@media (max-width: 600px) {
+  .page-photography .commission-feature__image {
+    aspect-ratio: 4 / 3;
+  }
+  .page-photography .commission-feature__info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .45rem;
   }
 }
