@@ -37,28 +37,20 @@ const SITE_CONFIG = {
   */
   homeProjects: [
     {
-      title: "Pull me out of this",
-      tag: "Short Film",
-      meta: "Philippines · Feb 2025",
-      thumbnail: "images/videophyt.jpg",
-      link: "https://www.youtube.com/watch?v=78xQUpdfYx8"
+      title: "Ocean & Wildlife",
+      tag: "Underwater Photography",
+      meta: "Moalboal, Philippines",
+      thumbnail: "images/ocean/DSC04487.webp",
+      link: "photography.html#editorial-underwater"
     },
     {
-      title: "Beauty of Vietnam",
-      tag: "Film",
-      meta: "Vietnam · April 2025",
-      thumbnail: "images/project-cebu.webp",
-      link: "#"
-    },
-    {
-      title: "Family in Puglia",
-      tag: "Photo",
-      meta: "Puglia · June 2026",
-      thumbnail: "images/project-vietnam.webp",
-      link: "#"
+      title: "Second Home",
+      tag: "Hospitality · Client Project",
+      meta: "Moalboal, Philippines",
+      thumbnail: "images/second-home/HIGHRES-1outside-hero.webp",
+      link: "second-home.html"
     }
   ],
-
 
   /* ─────────────────────────────────────────────
      3. EDITORIAL UNDERWATER (photography.html — section 1)
@@ -72,14 +64,27 @@ const SITE_CONFIG = {
        - size : "normal", "tall" ou "wide" (contrôle le rythme visuel de la grille)
   */
   editorialUnderwater: [
-    { src: "images/underwater-01.webp", alt: "Underwater — Moalboal reef", size: "tall" },
-    { src: "images/underwater-02.webp", alt: "Underwater — Sardine run", size: "normal" },
-    { src: "images/underwater-03.webp", alt: "Underwater — Coral macro", size: "wide" },
-    { src: "images/underwater-04.webp", alt: "Underwater — Freediver silhouette", size: "tall" },
-    { src: "images/underwater-05.webp", alt: "Underwater — Turtle encounter", size: "normal" },
-    { src: "images/underwater-06.webp", alt: "Underwater — Blue hour deep", size: "wide" }
+    { src: "images/ocean/DSC04487.webp", thumb: "images/ocean/thumbs/DSC04487.webp", alt: "Diver silhouetted beneath sunlit blue water", size: "wide" },
+    { src: "images/ocean/DSC03013.webp", thumb: "images/ocean/thumbs/DSC03013.webp", alt: "Scuba diver over a coral reef", size: "normal" },
+    { src: "images/ocean/DSC04016.webp", thumb: "images/ocean/thumbs/DSC04016.webp", alt: "Golden branching corals in shallow tropical water", size: "wide" },
+    { src: "images/ocean/DSC04656.webp", thumb: "images/ocean/thumbs/DSC04656.webp", alt: "Sea turtle resting against the reef", size: "normal" },
+    { src: "images/ocean/DSC04253-2.webp", thumb: "images/ocean/thumbs/DSC04253-2.webp", alt: "Octopus camouflaged on the seabed", size: "normal" },
+    { src: "images/ocean/DSC04808.webp", thumb: "images/ocean/thumbs/DSC04808.webp", alt: "Sea turtle swimming beneath rippled sunlight", size: "wide" },
+    { src: "images/ocean/DSC04926.webp", thumb: "images/ocean/thumbs/DSC04926.webp", alt: "Orange frogfish on reef", size: "normal" },
+    { src: "images/ocean/DSC04383.webp", thumb: "images/ocean/thumbs/DSC04383.webp", alt: "Colorful nudibranch close-up", size: "normal" },
+    { src: "images/ocean/DSC04885.webp", thumb: "images/ocean/thumbs/DSC04885.webp", alt: "Scorpionfish among colorful coral", size: "normal" },
+    { src: "images/ocean/DSC04457.webp", thumb: "images/ocean/thumbs/DSC04457.webp", alt: "Moray eel emerging from the reef", size: "normal" },
+    { src: "images/ocean/DSC04059.webp", thumb: "images/ocean/thumbs/DSC04059.webp", alt: "Soft coral formation and reef fish", size: "wide" },
+    { src: "images/ocean/DSC04331.webp", thumb: "images/ocean/thumbs/DSC04331.webp", alt: "Sea turtle resting on sandy seabed", size: "normal" },
+    { src: "images/ocean/DSC04872.webp", thumb: "images/ocean/thumbs/DSC04872.webp", alt: "Sea turtle swimming through open blue water", size: "wide" },
+    { src: "images/ocean/DSC04208.webp", thumb: "images/ocean/thumbs/DSC04208.webp", alt: "Orange frogfish portrait", size: "normal" },
+    { src: "images/ocean/DSC04339.webp", thumb: "images/ocean/thumbs/DSC04339.webp", alt: "Sea turtle viewed from above", size: "normal" },
+    { src: "images/ocean/DSC04860.webp", thumb: "images/ocean/thumbs/DSC04860.webp", alt: "Sea turtle swimming toward the surface", size: "wide" },
+    { src: "images/ocean/DSC04959.webp", thumb: "images/ocean/thumbs/DSC04959.webp", alt: "White nudibranch on reef", size: "normal" },
+    { src: "images/ocean/DSC04776.webp", thumb: "images/ocean/thumbs/DSC04776.webp", alt: "Sea turtle in open blue water", size: "wide" },
+    { src: "images/ocean/DSC04614.webp", thumb: "images/ocean/thumbs/DSC04614.webp", alt: "Scuba diver practicing skills underwater", size: "normal" },
+    { src: "images/ocean/DSC04626.webp", thumb: "images/ocean/thumbs/DSC04626.webp", alt: "Scuba diver underwater close-up", size: "normal" }
   ],
-
 
   /* ─────────────────────────────────────────────
      3b. EDITORIAL EXPEDITIONS & TRAVEL (photography.html — section 2)
@@ -101,6 +106,24 @@ const SITE_CONFIG = {
   ],
 
 
+  /* 
+     SECOND HOME — selected commissioned hospitality photography.
+     Full-resolution WebP and lightweight thumbnails live in images/second-home/.
+  */
+  secondHomePhotos: [
+    { src: "images/second-home/HIGHRES-daytime-entry.webp", thumb: "images/second-home/thumbs/HIGHRES-daytime-entry.webp", alt: "Second Home hostel exterior in daylight", size: "wide" },
+    { src: "images/second-home/HIGHRES-swimming1unicorn.webp", thumb: "images/second-home/thumbs/HIGHRES-swimming1unicorn.webp", alt: "Second Home swimming pool in daylight", size: "normal" },
+    { src: "images/second-home/HIGHRES-daytime-bar2.webp", thumb: "images/second-home/thumbs/HIGHRES-daytime-bar2.webp", alt: "Open air bar and seating area", size: "normal" },
+    { src: "images/second-home/HIGHRES-1outside-hero.webp", thumb: "images/second-home/thumbs/HIGHRES-1outside-hero.webp", alt: "Second Home illuminated swimming pool at night", size: "wide" },
+    { src: "images/second-home/HIGHRES-outside5.webp", thumb: "images/second-home/thumbs/HIGHRES-outside5.webp", alt: "Games area with pool table", size: "normal" },
+    { src: "images/second-home/HIGHRES-private-1hero.webp", thumb: "images/second-home/thumbs/HIGHRES-private-1hero.webp", alt: "Private double bedroom", size: "normal" },
+    { src: "images/second-home/HIGHRES-privatend2.webp", thumb: "images/second-home/thumbs/HIGHRES-privatend2.webp", alt: "Private room furnishings and amenities", size: "normal" },
+    { src: "images/second-home/HIGHRES-8dorm1hero.webp", thumb: "images/second-home/thumbs/HIGHRES-8dorm1hero.webp", alt: "Shared dormitory accommodation", size: "normal" },
+    { src: "images/second-home/HIGHRES-common1(1).webp", thumb: "images/second-home/thumbs/HIGHRES-common1(1).webp", alt: "Entrance hall with Cebu mural", size: "normal" },
+    { src: "images/second-home/HIGHRES-showerwc(1).webp", thumb: "images/second-home/thumbs/HIGHRES-showerwc(1).webp", alt: "Shared washbasin area", size: "normal" }
+  ],
+
+
   /* ─────────────────────────────────────────────
      4. PROJETS FILMMAKING (page filmmaking.html)
      ─────────────────────────────────────────────
@@ -115,36 +138,7 @@ const SITE_CONFIG = {
        - mediaType   : "image" ou "video"
        - link        : URL de destination (optionnel)
   */
-  filmProjects: [
-    {
-      title: "Beneath Moalboal",
-      meta: "Cebu, Philippines · 2026",
-      description: "A short documentary exploring the underwater world of Moalboal — sardine runs, coral gardens, and the freedivers who call this place home.",
-      roles: ["Filmmaking", "Underwater", "Editing"],
-      mediaSrc: "images/film-moalboal.webp",
-      mediaType: "image",
-      link: "#"
-    },
-    {
-      title: "Rivers of Light",
-      meta: "Vietnam · 2025",
-      description: "A cinematic travel film through the rivers, rice paddies, and hidden valleys of northern Vietnam. Shot over three weeks on a motorbike.",
-      roles: ["Filmmaking", "Editing", "Color Grading"],
-      mediaSrc: "images/film-vietnam.webp",
-      mediaType: "image",
-      link: "#"
-    },
-    {
-      title: "Sardine Run",
-      meta: "Moalboal · 2025",
-      description: "A short film capturing the mesmerizing sardine run of Moalboal — millions of sardines swirling in synchronized chaos just meters from the shore.",
-      roles: ["Filmmaking", "Underwater"],
-      mediaSrc: "images/film-sardines.webp",
-      mediaType: "image",
-      link: "#"
-    }
-  ],
-
+  filmProjects: [],
 
   /* ─────────────────────────────────────────────
      5. HERO — Texte d'identité (index.html)
