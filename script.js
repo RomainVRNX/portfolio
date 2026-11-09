@@ -85,9 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <a href="${project.link || '#'}" class="work-card__link" style="text-decoration:none;color:inherit;display:block;">
           <div class="work-card__thumb" style="background-image: url('${project.thumbnail}');">
-            <div class="work-card__play">
-              <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
-            </div>
+
           </div>
           <div class="work-card__body">
             <span class="work-card__tag">${project.tag}</span>
@@ -117,7 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const item = document.createElement('div');
       item.className = `masonry__item${sizeClass}`;
       item.id = `${containerId}-${i}`;
-      item.innerHTML = `<img src="${photo.src}" alt="${photo.alt}" loading="lazy">`;
+      const src = photo.thumb || photo.src;
+      item.innerHTML = `<img src="${src}" alt="${photo.alt}" loading="lazy" decoding="async" data-full="${photo.src}">`;
 
       const capturedIndex = globalOffset + i;
       item.addEventListener('click', () => {
@@ -134,14 +133,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const masonryUnderwater = document.getElementById('masonry-underwater');
   const masonryExpeditions = document.getElementById('masonry-expeditions');
 
-  if ((masonryUnderwater || masonryExpeditions) && typeof SITE_CONFIG !== 'undefined') {
+  if ((masonryUnderwater || masonryExpeditions || document.getElementById('masonry-second-home')) && typeof SITE_CONFIG !== 'undefined') {
     const uwPhotos = SITE_CONFIG.editorialUnderwater || [];
     const expPhotos = SITE_CONFIG.editorialExpeditions || [];
-    const allPhotos = [...uwPhotos, ...expPhotos];
+    const secondHomePhotos = document.getElementById('masonry-second-home') ? (SITE_CONFIG.secondHomePhotos || []) : [];
+    const allPhotos = secondHomePhotos.length ? secondHomePhotos : [...uwPhotos, ...expPhotos];
 
     let offset = 0;
-    offset = buildEditorialMasonry('masonry-underwater', uwPhotos, allPhotos, offset);
-    offset = buildEditorialMasonry('masonry-expeditions', expPhotos, allPhotos, offset);
+    if (!secondHomePhotos.length) {
+      offset = buildEditorialMasonry('masonry-underwater', uwPhotos, allPhotos, offset);
+      offset = buildEditorialMasonry('masonry-expeditions', expPhotos, allPhotos, offset);
+    } else {
+      buildEditorialMasonry('masonry-second-home', secondHomePhotos, allPhotos, 0);
+    }
 
     // --- Lightbox ---
     const lightbox = document.getElementById('lightbox');
