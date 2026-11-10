@@ -3452,3 +3452,30 @@ body.mobile-menu-open {
 @media (max-height: 520px) and (orientation: landscape) {
   .hero { min-height: 580px; }
 }
+
+/* ============================================
+   WORK — Touch-first cards
+   Hover is a pointer affordance, not a requirement to discover the cards.
+   ============================================ */
+@media (hover: none), (pointer: coarse) {
+  .split:hover .split__panel,
+  .split__panel:hover {
+    flex: 1 !important;
+  }
+  .split__bg,
+  .split__panel:hover .split__bg {
+    filter: saturate(.85) brightness(.72);
+    transform: scale(1.02);
+  }
+  .split__enter,
+  .split__panel:hover .split__enter {
+    opacity: 1;
+    transform: none;
+  }
+  .split__panel:hover .split__enter-arrow {
+    transform: none;
+  }
+  .split__panel:active .split__bg {
+    filter: saturate(1) brightness(.8);
+  }
+}
