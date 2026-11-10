@@ -15,14 +15,15 @@ const SITE_CONFIG = {
   /* ─────────────────────────────────────────────
      1. HERO — Vidéos & poster
      ─────────────────────────────────────────────
-     Déposer les trois fichiers dans images/.
-     Le navigateur essaie H.265 (HEVC) si compatible,
-     puis H.264 (AVC). Le poster reste affiché
-     tant que la vidéo ne peut pas être lue.
+     Mobile : MP4 léger H.264 (écran jusqu'à 768 px).
+     Desktop : H.265 (HEVC), avec H.264 de secours.
+     Chaque navigateur charge la source adaptée et utilise
+     le poster si la vidéo ne peut pas démarrer.
   */
   heroMedia: {
     hevc: "images/hero-ocean-h265.mp4",
     avc: "images/hero-ocean-h264.mp4",
+    mobile: "images/hero-ocean-mobile.mp4",
     poster: "images/hero-poster.webp"
   },
 
