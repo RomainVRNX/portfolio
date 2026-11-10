@@ -99,6 +99,45 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
+  // Photography — scalable commissioned project cards.
+  const clientProjectsGrid = document.getElementById('client-projects');
+  if (clientProjectsGrid && typeof SITE_CONFIG !== 'undefined' && Array.isArray(SITE_CONFIG.clientProjects)) {
+    clientProjectsGrid.innerHTML = '';
+    SITE_CONFIG.clientProjects.forEach((project) => {
+      const card = document.createElement('a');
+      card.className = 'client-project';
+      card.href = project.link;
+      card.setAttribute('aria-label', 'View ' + project.title + ' photography project');
+      const image = document.createElement('div');
+      image.className = 'client-project__image';
+      const img = document.createElement('img');
+      img.src = project.cover;
+      img.alt = project.alt || project.title;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      const overlay = document.createElement('span');
+      overlay.className = 'client-project__overlay';
+      overlay.textContent = 'View Project ↗';
+      image.append(img, overlay);
+      const info = document.createElement('div');
+      info.className = 'client-project__info';
+      const labels = document.createElement('div');
+      const title = document.createElement('h3');
+      title.className = 'client-project__title';
+      title.textContent = project.title;
+      const meta = document.createElement('p');
+      meta.className = 'client-project__meta';
+      meta.textContent = [project.category, project.location].filter(Boolean).join(' · ');
+      labels.append(title, meta);
+      const action = document.createElement('span');
+      action.className = 'client-project__action';
+      action.textContent = 'View Project ↗';
+      info.append(labels, action);
+      card.append(image, info);
+      clientProjectsGrid.appendChild(card);
+    });
+  }
+
   /* ============================================
      4. PHOTOGRAPHY — Editorial Masonry (2 Sections)
      ============================================ */
