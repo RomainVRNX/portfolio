@@ -15,10 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.setAttribute('aria-controls', 'nav-mobile');
     hamburger.setAttribute('aria-expanded', 'false');
     navMobile.setAttribute('aria-label', 'Mobile navigation');
+    navMobile.inert = true;
 
     const setMobileMenu = (open) => {
       hamburger.classList.toggle('open', open);
       navMobile.classList.toggle('open', open);
+      navMobile.inert = !open;
       hamburger.setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('mobile-menu-open', open);
     };
@@ -545,6 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!anchor) return;
 
       const href = anchor.getAttribute('href');
+      // Only portfolio films open in the player; social profile links open normally.
+      if (!anchor.closest('.film-block, .showreel') || anchor.target === '_blank') return;
       if (isYouTubeUrl(href)) {
         e.preventDefault();
         e.stopPropagation();
