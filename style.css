@@ -1790,6 +1790,8 @@ button, input, textarea {
   opacity: 0;
   user-select: none;
   -webkit-user-drag: none;
+  /* Keep horizontal gestures for the gallery while preserving vertical touch behavior. */
+  touch-action: pan-y;
 }
 
 .lightbox--open .lightbox__img {
