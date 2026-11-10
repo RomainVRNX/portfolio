@@ -426,6 +426,50 @@ button, input, textarea {
   }
 }
 
+/* Scroll hint refinement — reuse the original pulsing line. */
+.hero__scroll {
+  text-decoration: none;
+  color: var(--grey);
+  padding: .65rem 1rem .2rem;
+  min-width: 150px;
+  cursor: pointer;
+}
+.hero__scroll-label {
+  font-family: var(--font-body);
+  color: var(--grey);
+  font-size: .62rem;
+  font-weight: 400;
+  letter-spacing: .19em;
+  white-space: nowrap;
+  transition: color .25s ease;
+}
+.hero__scroll-arrow {
+  color: var(--teal);
+  margin-top: -.35rem;
+  animation: scrollArrowDrift 2s ease-in-out infinite;
+}
+.hero__scroll:hover .hero__scroll-label,
+.hero__scroll:focus-visible .hero__scroll-label {
+  color: var(--white);
+}
+.hero__scroll:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+@keyframes scrollArrowDrift {
+  0%, 100% { transform: translateY(0); opacity: .65; }
+  50% { transform: translateY(4px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll,
+  .hero__scroll-line::after,
+  .hero__scroll-arrow {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
 /* ============================================
    BUTTONS
    ============================================ */
