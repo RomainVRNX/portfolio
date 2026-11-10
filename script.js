@@ -238,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lightbox) {
       let lbPhotos = [];
       let lbIndex = 0;
+      let imageRequest = 0;
 
       const lbImg = document.getElementById('lightbox-img');
       const lbCounter = document.getElementById('lightbox-counter');
@@ -245,21 +246,47 @@ document.addEventListener('DOMContentLoaded', () => {
       window.openLightbox = function(photos, index) {
         lbPhotos = photos;
         lbIndex = index;
-        updateLightboxImage();
         lightbox.classList.add('lightbox--open');
         document.body.style.overflow = 'hidden';
+        updateLightboxImage();
       };
 
       function closeLightbox() {
-        lightbox.classList.remove('lightbox--open');
+        // Invalidate any pending image load before the next opening.
+        imageRequest++;
+        lightbox.classList.remove('lightbox--open', 'lightbox--loading', 'lightbox--error');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
         document.body.style.overflow = '';
       }
 
       function updateLightboxImage() {
         const photo = lbPhotos[lbIndex];
-        lbImg.setAttribute('src', photo.src);
-        lbImg.setAttribute('alt', photo.alt);
+        if (!photo) return;
+
+        // Never show the previous picture while the new one is loading.
+        const request = ++imageRequest;
+        lightbox.classList.remove('lightbox--error');
+        lightbox.classList.add('lightbox--loading');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
         lbCounter.textContent = `${lbIndex + 1} / ${lbPhotos.length}`;
+
+        const incoming = new Image();
+        incoming.onload = () => {
+          // Rapid next/previous taps must not show out-of-order images.
+          if (request !== imageRequest || !lightbox.classList.contains('lightbox--open')) return;
+          lbImg.alt = photo.alt || '';
+          lbImg.src = photo.src;
+          lightbox.classList.remove('lightbox--loading');
+        };
+        incoming.onerror = () => {
+          if (request !== imageRequest || !lightbox.classList.contains('lightbox--open')) return;
+          lightbox.classList.remove('lightbox--loading');
+          lightbox.classList.add('lightbox--error');
+          lbCounter.textContent = 'Image unavailable — try another photo';
+        };
+        incoming.src = photo.src;
       }
 
       function lbPrev() {
