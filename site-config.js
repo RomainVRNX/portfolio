@@ -102,11 +102,13 @@ const SITE_CONFIG = {
     { src: "images/dr_ph3.jpg", alt: "Philippines - Drone", size: "tall" },
     { src: "images/TREK/DSC07630.jpg", alt: "Milky way", size: "normal" },
     { src: "images/DSC00814.jpg", alt: "Thailand", size: "tall" },
+    { src: "images/travel/DSC00775.webp", thumb: "images/travel/thumbs/DSC00775.webp", alt: "Ornate golden guardian sculpture beside a temple", size: "normal" },
     { src: "images/DSC00459.jpg", alt: "Muay Thai", size: "tall" },
     { src: "images/BIRDS/DSC04297.jpg", alt: "Wildlife — Bird portrait", size: "normal" },
-    { src: "images/TREK/DJI_0315.jpg", alt: "Trek — Aerial view", size: "wide" },
+    { src: "images/travel/DJI_0315.webp", thumb: "images/travel/thumbs/DJI_0315.webp", alt: "Hiker overlooking a limestone mountain in the French Alps", size: "wide" },
     { src: "images/DJI_0314.jpg", alt: "Vietnam - Ninh Binh", size: "tall" },
     { src: "images/PUGLIA/DSC01214.jpg", alt: "Puglia — Fisherman", size: "normal" },
+    { src: "images/travel/DSC00923.webp", thumb: "images/travel/thumbs/DSC00923.webp", alt: "Sunlit terracotta courtyard with arched passage and blue planter", size: "tall" },
     { src: "images/BIRDS/DSC08496.jpg", alt: "Wildlife", size: "wide" }
   ],
 
