@@ -3418,3 +3418,37 @@ html {
 @media (max-width: 480px) {
   .contact-intro__disciplines { gap: 1.1rem; }
 }
+
+/* ============================================
+   MOBILE FINISHING — safe areas and interactions
+   ============================================ */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+@media (max-width: 900px) {
+  /* Keep the cinematic hero but allow its content to grow on smaller screens. */
+  .hero {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: calc(var(--nav-h) + 2rem) 0 7.5rem;
+  }
+  .hero__scroll {
+    bottom: max(.75rem, env(safe-area-inset-bottom));
+  }
+  /* The journey's scroll indicator uses the Home style and anchor. */
+  #journey-scenes {
+    scroll-margin-top: var(--nav-h);
+  }
+  .lightbox__nav {
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (max-width: 480px) {
+  .hero__content { width: 100%; }
+  .hero__tagline { max-width: 30ch; margin-left: auto; margin-right: auto; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { min-height: 580px; }
+}
