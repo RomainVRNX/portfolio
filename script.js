@@ -57,14 +57,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -------- Dynamic Media Rendering (from site-config.js) -------- */
 
-  // 1. Hero Video (index.html)
+  // 1. Home hero: HEVC when the browser supports it, AVC otherwise.
+  // Keep the poster visible if neither source plays. No layout/design changes.
   const heroVideo = document.querySelector('.hero__video');
-  if (heroVideo && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroVideo) {
-    const source = heroVideo.querySelector('source');
-    if (source) {
-      source.setAttribute('src', SITE_CONFIG.heroVideo);
+  if (heroVideo && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroMedia) {
+    const { hevc, avc, poster } = SITE_CONFIG.heroMedia;
+    heroVideo.poster = poster;
+    const hevcSource = heroVideo.querySelector('source[type*="hvc1"]');
+    const avcSource = heroVideo.querySelector('source[type*="avc1"]');
+    if (hevcSource && avcSource) {
+      hevcSource.src = hevc;
+      avcSource.src = avc;
       heroVideo.load();
     }
+    // Some browsers report HEVC support but fail at actual playback.
+    // Fall back to the AVC file if the media element reports a fatal error.
+    heroVideo.addEventListener('error', () => {
+      if (!avc || heroVideo.dataset.avcFallback === 'true') return;
+      heroVideo.dataset.avcFallback = 'true';
+      heroVideo.src = avc;
+      heroVideo.load();
+      heroVideo.play().catch(() => {});
+    });
   }
 
   // 2. Hero Label (index.html)
