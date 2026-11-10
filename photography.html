@@ -47,6 +47,11 @@
       <p class="page-hero__kicker">Portfolio</p>
       <h1 class="page-hero__title">Photo<em>graphy</em></h1>
       <div class="page-hero__divider"></div>
+      <nav class="photo-jump-nav" aria-label="Explore photography collections">
+        <a href="#editorial-underwater" class="photo-jump-nav__link">Ocean &amp; Wildlife</a>
+        <a href="#editorial-expeditions" class="photo-jump-nav__link">Expeditions</a>
+        <a href="#editorial-commercial" class="photo-jump-nav__link">Client Work</a>
+      </nav>
     </div>
   </section>
 
@@ -70,26 +75,28 @@
     </div>
   </section>
 
-  <!-- ===== COMMISSIONED PHOTOGRAPHY ===== -->
+  <!-- ===== CLIENT WORK — add projects through SITE_CONFIG.clientProjects ===== -->
   <section class="section editorial-section" id="editorial-commercial">
     <div class="section__inner">
       <div class="editorial-section__header reveal">
-        <h2 class="editorial-section__title">Commercial <em>Work</em></h2>
+        <h2 class="editorial-section__title">Client <em>Work</em></h2>
       </div>
-      <a class="commission-feature reveal" href="second-home.html" aria-label="Explore Second Home photography project">
-        <div class="commission-feature__image">
-          <img src="images/second-home/HIGHRES-1outside-hero.webp"
-               alt="Second Home hostel swimming pool illuminated at night"
-               loading="lazy" decoding="async">
-        </div>
-        <div class="commission-feature__info">
-          <div>
-            <h3 class="commission-feature__title">Second Home</h3>
-            <p class="commission-feature__meta">Hospitality photography · Moalboal, Philippines</p>
+      <div class="client-projects reveal" id="client-projects">
+        <a class="client-project" href="second-home.html" aria-label="View the Second Home client project">
+          <div class="client-project__image">
+            <img src="images/second-home/HIGHRES-1outside-hero.webp"
+                 alt="Second Home illuminated pool at night" loading="lazy" decoding="async">
+            <span class="client-project__overlay">View Project <span aria-hidden="true">↗</span></span>
           </div>
-          <span class="commission-feature__link">Explore project <span aria-hidden="true">↗</span></span>
-        </div>
-      </a>
+          <div class="client-project__info">
+            <div>
+              <h3 class="client-project__title">Second Home</h3>
+              <p class="client-project__meta">Hospitality Photography · Moalboal</p>
+            </div>
+            <span class="client-project__action">View Project <span aria-hidden="true">↗</span></span>
+          </div>
+        </a>
+      </div>
     </div>
   </section>
 
