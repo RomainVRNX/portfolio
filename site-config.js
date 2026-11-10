@@ -13,13 +13,18 @@
 const SITE_CONFIG = {
 
   /* ─────────────────────────────────────────────
-     1. VIDÉO HERO (page d'accueil)
+     1. HERO — Vidéos & poster
      ─────────────────────────────────────────────
-     Change le lien ci-dessous pour changer la vidéo.
-     → Fichier local : "images/testhero.mp4"
-     → URL externe  : "https://exemple.com/video.mp4"
+     Déposer les trois fichiers dans images/.
+     Le navigateur essaie H.265 (HEVC) si compatible,
+     puis H.264 (AVC). Le poster reste affiché
+     tant que la vidéo ne peut pas être lue.
   */
-  heroVideo: "images/testhero.mp4",
+  heroMedia: {
+    hevc: "images/hero-ocean-h265.mp4",
+    avc: "images/hero-ocean-h264.mp4",
+    poster: "images/hero-poster.webp"
+  },
 
 
   /* ─────────────────────────────────────────────
