@@ -3316,3 +3316,68 @@ html {
 @media (max-width: 480px) {
   .message-success { padding-inline: 1.25rem; }
 }
+
+/* ============================================
+   CONTACT — Editorial invitation
+   ============================================ */
+.contact-info-col {
+  min-width: 0;
+}
+.contact-intro__eyebrow {
+  color: var(--teal);
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .19em;
+  margin: 0 0 1rem;
+}
+.contact-intro__title {
+  font: 400 clamp(1.9rem, 3.3vw, 2.65rem)/1.18 var(--font-display);
+  margin: 0 0 1.35rem;
+  color: var(--white);
+}
+.contact-intro__title em {
+  color: var(--teal);
+  font-style: italic;
+}
+.contact-intro__copy {
+  color: var(--grey);
+  font-size: .93rem;
+  line-height: 1.85;
+  max-width: 480px;
+  margin: 0;
+}
+.contact-intro__disciplines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.6rem 0;
+  margin: 1.75rem 0;
+  border-top: 1px solid rgba(255,255,255,.09);
+  border-bottom: 1px solid rgba(255,255,255,.09);
+}
+.contact-intro__disciplines span {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
+  color: var(--white);
+  font-size: .8rem;
+  font-weight: 400;
+}
+.contact-intro__disciplines i { color: var(--teal); }
+.contact-intro__direct { margin-bottom: 1.65rem; }
+.contact-intro__direct .contact-info__label { color: var(--grey); }
+.contact-intro__direct .contact-info__link {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .6rem;
+  font-size: clamp(.9rem, 2vw, 1rem);
+}
+.contact-intro__direct .contact-info__link i { font-size: .7rem; }
+.contact-info-col .contact-socials { margin-top: 0; }
+@media (max-width: 900px) {
+  .contact-intro__title { font-size: clamp(1.9rem, 6vw, 2.6rem); }
+}
+@media (max-width: 480px) {
+  .contact-intro__disciplines { gap: 1.1rem; }
+}
