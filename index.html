@@ -46,9 +46,10 @@
   <section class="hero" id="hero">
     <video class="hero__video" autoplay loop muted playsinline preload="metadata"
            poster="images/hero-poster.webp" aria-hidden="true">
-      <!-- Source order: high-efficiency HEVC where supported, H.264 fallback. -->
-      <source src="images/hero-ocean-h265.mp4" type='video/mp4; codecs="hvc1"'>
-      <source src="images/hero-ocean-h264.mp4" type='video/mp4; codecs="avc1"'>
+      <!-- The browser selects one source for the viewport; it does not download all three. -->
+      <source src="images/hero-ocean-mobile.mp4" media="(max-width: 768px)" type='video/mp4; codecs="avc1"'>
+      <source src="images/hero-ocean-h265.mp4" media="(min-width: 769px)" type='video/mp4; codecs="hvc1"'>
+      <source src="images/hero-ocean-h264.mp4" media="(min-width: 769px)" type='video/mp4; codecs="avc1"'>
     </video>
     <div class="hero__overlay"></div>
     <div class="hero__color-grade"></div>
