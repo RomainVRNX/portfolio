@@ -9,16 +9,41 @@ document.addEventListener('DOMContentLoaded', () => {
   const navMobile = document.getElementById('nav-mobile');
 
   if (hamburger && navMobile) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      navMobile.classList.toggle('open');
-    });
+    // The menu icon is a div in the original markup: make it keyboard accessible.
+    hamburger.setAttribute('role', 'button');
+    hamburger.setAttribute('tabindex', '0');
+    hamburger.setAttribute('aria-controls', 'nav-mobile');
+    hamburger.setAttribute('aria-expanded', 'false');
+    navMobile.setAttribute('aria-label', 'Mobile navigation');
 
+    const setMobileMenu = (open) => {
+      hamburger.classList.toggle('open', open);
+      navMobile.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('mobile-menu-open', open);
+    };
+    hamburger.addEventListener('click', () => {
+      setMobileMenu(!navMobile.classList.contains('open'));
+    });
+    hamburger.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        setMobileMenu(!navMobile.classList.contains('open'));
+      }
+    });
     navMobile.querySelectorAll('.nav-mobile__link').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        navMobile.classList.remove('open');
-      });
+      link.addEventListener('click', () => setMobileMenu(false));
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navMobile.classList.contains('open')) {
+        setMobileMenu(false);
+        hamburger.focus();
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900 && navMobile.classList.contains('open')) {
+        setMobileMenu(false);
+      }
     });
   }
 
@@ -248,6 +273,31 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
       document.getElementById('lightbox-prev').addEventListener('click', lbPrev);
       document.getElementById('lightbox-next').addEventListener('click', lbNext);
+
+      // Native-feeling photo navigation on touchscreens; ignore vertical scroll.
+      let touchStart = null;
+      lightbox.addEventListener('touchstart', (event) => {
+        if (!lightbox.classList.contains('lightbox--open') || event.touches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        const touch = event.touches[0];
+        touchStart = { x: touch.clientX, y: touch.clientY };
+      }, { passive: true });
+      lightbox.addEventListener('touchend', (event) => {
+        if (!touchStart || !lightbox.classList.contains('lightbox--open') || event.changedTouches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - touchStart.x;
+        const deltaY = touch.clientY - touchStart.y;
+        touchStart = null;
+        if (Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) {
+          if (deltaX < 0) lbNext();
+          else lbPrev();
+        }
+      }, { passive: true });
 
       lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
