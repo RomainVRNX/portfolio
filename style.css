@@ -1799,6 +1799,31 @@ button, input, textarea {
   opacity: 1;
 }
 
+/* The lightbox must never display a previous image during navigation. */
+.lightbox--loading .lightbox__img,
+.lightbox--error .lightbox__img {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+.lightbox--loading::after {
+  content: '';
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -11px 0 0 -11px;
+  border: 2px solid rgba(45, 212, 191, .2);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: lightboxLoad 1s linear infinite;
+  pointer-events: none;
+}
+@keyframes lightboxLoad { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .lightbox--loading::after { animation: none; }
+}
+
 /* Close button */
 .lightbox__close {
   position: absolute;
