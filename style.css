@@ -1790,11 +1790,38 @@ button, input, textarea {
   opacity: 0;
   user-select: none;
   -webkit-user-drag: none;
+  /* Keep horizontal gestures for the gallery while preserving vertical touch behavior. */
+  touch-action: pan-y;
 }
 
 .lightbox--open .lightbox__img {
   transform: scale(1);
   opacity: 1;
+}
+
+/* The lightbox must never display a previous image during navigation. */
+.lightbox--loading .lightbox__img,
+.lightbox--error .lightbox__img {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+.lightbox--loading::after {
+  content: '';
+  width: 22px;
+  height: 22px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -11px 0 0 -11px;
+  border: 2px solid rgba(45, 212, 191, .2);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: lightboxLoad 1s linear infinite;
+  pointer-events: none;
+}
+@keyframes lightboxLoad { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .lightbox--loading::after { animation: none; }
 }
 
 /* Close button */
@@ -3417,4 +3444,65 @@ html {
 }
 @media (max-width: 480px) {
   .contact-intro__disciplines { gap: 1.1rem; }
+}
+
+/* ============================================
+   MOBILE FINISHING — safe areas and interactions
+   ============================================ */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+@media (max-width: 900px) {
+  /* Keep the cinematic hero but allow its content to grow on smaller screens. */
+  .hero {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: calc(var(--nav-h) + 2rem) 0 7.5rem;
+  }
+  .hero__scroll {
+    bottom: max(.75rem, env(safe-area-inset-bottom));
+  }
+  /* The journey's scroll indicator uses the Home style and anchor. */
+  #journey-scenes {
+    scroll-margin-top: var(--nav-h);
+  }
+  .lightbox__nav {
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (max-width: 480px) {
+  .hero__content { width: 100%; }
+  .hero__tagline { max-width: 30ch; margin-left: auto; margin-right: auto; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { min-height: 580px; }
+}
+
+/* ============================================
+   WORK — Touch-first cards
+   Hover is a pointer affordance, not a requirement to discover the cards.
+   ============================================ */
+@media (hover: none), (pointer: coarse) {
+  .split:hover .split__panel,
+  .split__panel:hover {
+    flex: 1 !important;
+  }
+  .split__bg,
+  .split__panel:hover .split__bg {
+    filter: saturate(.85) brightness(.72);
+    transform: scale(1.02);
+  }
+  .split__enter,
+  .split__panel:hover .split__enter {
+    opacity: 1;
+    transform: none;
+  }
+  .split__panel:hover .split__enter-arrow {
+    transform: none;
+  }
+  .split__panel:active .split__bg {
+    filter: saturate(1) brightness(.8);
+  }
 }

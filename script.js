@@ -9,16 +9,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const navMobile = document.getElementById('nav-mobile');
 
   if (hamburger && navMobile) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      navMobile.classList.toggle('open');
-    });
+    // The menu icon is a div in the original markup: make it keyboard accessible.
+    hamburger.setAttribute('role', 'button');
+    hamburger.setAttribute('tabindex', '0');
+    hamburger.setAttribute('aria-controls', 'nav-mobile');
+    hamburger.setAttribute('aria-expanded', 'false');
+    navMobile.setAttribute('aria-label', 'Mobile navigation');
+    navMobile.inert = true;
 
+    const setMobileMenu = (open) => {
+      hamburger.classList.toggle('open', open);
+      navMobile.classList.toggle('open', open);
+      navMobile.inert = !open;
+      hamburger.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('mobile-menu-open', open);
+    };
+    hamburger.addEventListener('click', () => {
+      setMobileMenu(!navMobile.classList.contains('open'));
+    });
+    hamburger.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        setMobileMenu(!navMobile.classList.contains('open'));
+      }
+    });
     navMobile.querySelectorAll('.nav-mobile__link').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        navMobile.classList.remove('open');
-      });
+      link.addEventListener('click', () => setMobileMenu(false));
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navMobile.classList.contains('open')) {
+        setMobileMenu(false);
+        hamburger.focus();
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900 && navMobile.classList.contains('open')) {
+        setMobileMenu(false);
+      }
     });
   }
 
@@ -63,21 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -------- Dynamic Media Rendering (from site-config.js) -------- */
 
-  // 1. Home hero: HEVC when the browser supports it, AVC otherwise.
-  // Keep the poster visible if neither source plays. No layout/design changes.
+  // 1. Home hero — native <source media> selection prevents the mobile browser
+  // from starting a 28 MB desktop download. Keep all file paths in site-config.js.
   const heroVideo = document.querySelector('.hero__video');
   if (heroVideo && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroMedia) {
-    const { hevc, avc, poster } = SITE_CONFIG.heroMedia;
+    const { mobile, hevc, avc, poster } = SITE_CONFIG.heroMedia;
     heroVideo.poster = poster;
-    const hevcSource = heroVideo.querySelector('source[type*="hvc1"]');
-    const avcSource = heroVideo.querySelector('source[type*="avc1"]');
-    if (hevcSource && avcSource) {
-      hevcSource.src = hevc;
-      avcSource.src = avc;
-      heroVideo.load();
-    }
-    // Some browsers report HEVC support but fail at actual playback.
-    // Fall back to the AVC file if the media element reports a fatal error.
+    const videoSources = heroVideo.querySelectorAll('source');
+    const wanted = [mobile, hevc, avc];
+    let changed = false;
+    videoSources.forEach((source, index) => {
+      if (wanted[index] && source.getAttribute('src') !== wanted[index]) {
+        source.setAttribute('src', wanted[index]);
+        changed = true;
+      }
+    });
+    if (changed) heroVideo.load();
+
+    // Playback can still fail when a device advertises unsupported HEVC.
+    // Only then use the compatible desktop AVC fallback.
     heroVideo.addEventListener('error', () => {
       if (!avc || heroVideo.dataset.avcFallback === 'true') return;
       heroVideo.dataset.avcFallback = 'true';
@@ -211,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lightbox) {
       let lbPhotos = [];
       let lbIndex = 0;
+      let imageRequest = 0;
 
       const lbImg = document.getElementById('lightbox-img');
       const lbCounter = document.getElementById('lightbox-counter');
@@ -218,21 +250,47 @@ document.addEventListener('DOMContentLoaded', () => {
       window.openLightbox = function(photos, index) {
         lbPhotos = photos;
         lbIndex = index;
-        updateLightboxImage();
         lightbox.classList.add('lightbox--open');
         document.body.style.overflow = 'hidden';
+        updateLightboxImage();
       };
 
       function closeLightbox() {
-        lightbox.classList.remove('lightbox--open');
+        // Invalidate any pending image load before the next opening.
+        imageRequest++;
+        lightbox.classList.remove('lightbox--open', 'lightbox--loading', 'lightbox--error');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
         document.body.style.overflow = '';
       }
 
       function updateLightboxImage() {
         const photo = lbPhotos[lbIndex];
-        lbImg.setAttribute('src', photo.src);
-        lbImg.setAttribute('alt', photo.alt);
+        if (!photo) return;
+
+        // Never show the previous picture while the new one is loading.
+        const request = ++imageRequest;
+        lightbox.classList.remove('lightbox--error');
+        lightbox.classList.add('lightbox--loading');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
         lbCounter.textContent = `${lbIndex + 1} / ${lbPhotos.length}`;
+
+        const incoming = new Image();
+        incoming.onload = () => {
+          // Rapid next/previous taps must not show out-of-order images.
+          if (request !== imageRequest || !lightbox.classList.contains('lightbox--open')) return;
+          lbImg.alt = photo.alt || '';
+          lbImg.src = photo.src;
+          lightbox.classList.remove('lightbox--loading');
+        };
+        incoming.onerror = () => {
+          if (request !== imageRequest || !lightbox.classList.contains('lightbox--open')) return;
+          lightbox.classList.remove('lightbox--loading');
+          lightbox.classList.add('lightbox--error');
+          lbCounter.textContent = 'Image unavailable — try another photo';
+        };
+        incoming.src = photo.src;
       }
 
       function lbPrev() {
@@ -248,6 +306,31 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
       document.getElementById('lightbox-prev').addEventListener('click', lbPrev);
       document.getElementById('lightbox-next').addEventListener('click', lbNext);
+
+      // Native-feeling photo navigation on touchscreens; ignore vertical scroll.
+      let touchStart = null;
+      lightbox.addEventListener('touchstart', (event) => {
+        if (!lightbox.classList.contains('lightbox--open') || event.touches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        const touch = event.touches[0];
+        touchStart = { x: touch.clientX, y: touch.clientY };
+      }, { passive: true });
+      lightbox.addEventListener('touchend', (event) => {
+        if (!touchStart || !lightbox.classList.contains('lightbox--open') || event.changedTouches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - touchStart.x;
+        const deltaY = touch.clientY - touchStart.y;
+        touchStart = null;
+        if (Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) {
+          if (deltaX < 0) lbNext();
+          else lbPrev();
+        }
+      }, { passive: true });
 
       lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
@@ -495,6 +578,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!anchor) return;
 
       const href = anchor.getAttribute('href');
+      // Only portfolio films open in the player; social profile links open normally.
+      if (!anchor.closest('.film-block, .showreel') || anchor.target === '_blank') return;
       if (isYouTubeUrl(href)) {
         e.preventDefault();
         e.stopPropagation();
