@@ -3252,3 +3252,10 @@ html {
   .page-photography .photo-jump-nav { gap: .45rem; }
   .page-photography .photo-jump-nav__link { min-height: 44px; }
 }
+
+/* Netlify form honeypot and unavailable social links stay off-screen. */
+.contact-form__honeypot,
+.contact-social-btn[hidden],
+.footer-social[hidden] {
+  display: none !important;
+}
