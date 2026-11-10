@@ -90,21 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -------- Dynamic Media Rendering (from site-config.js) -------- */
 
-  // 1. Home hero: HEVC when the browser supports it, AVC otherwise.
-  // Keep the poster visible if neither source plays. No layout/design changes.
+  // 1. Home hero — native <source media> selection prevents the mobile browser
+  // from starting a 28 MB desktop download. Keep all file paths in site-config.js.
   const heroVideo = document.querySelector('.hero__video');
   if (heroVideo && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroMedia) {
-    const { hevc, avc, poster } = SITE_CONFIG.heroMedia;
+    const { mobile, hevc, avc, poster } = SITE_CONFIG.heroMedia;
     heroVideo.poster = poster;
-    const hevcSource = heroVideo.querySelector('source[type*="hvc1"]');
-    const avcSource = heroVideo.querySelector('source[type*="avc1"]');
-    if (hevcSource && avcSource) {
-      hevcSource.src = hevc;
-      avcSource.src = avc;
-      heroVideo.load();
-    }
-    // Some browsers report HEVC support but fail at actual playback.
-    // Fall back to the AVC file if the media element reports a fatal error.
+    const videoSources = heroVideo.querySelectorAll('source');
+    const wanted = [mobile, hevc, avc];
+    let changed = false;
+    videoSources.forEach((source, index) => {
+      if (wanted[index] && source.getAttribute('src') !== wanted[index]) {
+        source.setAttribute('src', wanted[index]);
+        changed = true;
+      }
+    });
+    if (changed) heroVideo.load();
+
+    // Playback can still fail when a device advertises unsupported HEVC.
+    // Only then use the compatible desktop AVC fallback.
     heroVideo.addEventListener('error', () => {
       if (!avc || heroVideo.dataset.avcFallback === 'true') return;
       heroVideo.dataset.avcFallback = 'true';
