@@ -3118,3 +3118,137 @@ button, input, textarea {
     gap: .45rem;
   }
 }
+
+/* Photography page: direct category shortcuts, no additional landing page */
+.page-photography .photo-jump-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin: clamp(1.5rem, 3vw, 2.5rem) auto 0;
+}
+.page-photography .photo-jump-nav__link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 42px;
+  padding: .62rem 1.15rem;
+  border: 1px solid rgba(158, 180, 184, .26);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--grey);
+  font-family: var(--font-body);
+  font-size: .76rem;
+  font-weight: 400;
+  letter-spacing: .035em;
+  transition: border-color .25s ease, color .25s ease, background .25s ease;
+}
+.page-photography .photo-jump-nav__link:hover,
+.page-photography .photo-jump-nav__link:focus-visible {
+  border-color: var(--teal);
+  background: rgba(45, 212, 191, .07);
+  color: var(--white);
+}
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Client Work: one centered card today, responsive grid as new projects arrive. */
+.page-photography .client-projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  max-width: 1150px;
+  margin: 0 auto;
+}
+.page-photography .client-projects:has(> :only-child) {
+  grid-template-columns: minmax(0, 720px);
+  justify-content: center;
+}
+.page-photography .client-project {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.page-photography .client-project__image {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.page-photography .client-project__image img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform .45s ease;
+}
+.page-photography .client-project__overlay {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  padding: .55rem .85rem;
+  border-radius: 999px;
+  color: var(--white);
+  background: rgba(5, 8, 10, .88);
+  border: 1px solid rgba(45, 212, 191, .45);
+  font-size: .75rem;
+  letter-spacing: .04em;
+  pointer-events: none;
+}
+.page-photography .client-project__info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.05rem;
+}
+.page-photography .client-project__title {
+  font-family: var(--font-display);
+  color: var(--white);
+  font-size: clamp(1.35rem, 2.3vw, 1.8rem);
+  font-weight: 400;
+  margin-bottom: .2rem;
+}
+.page-photography .client-project__meta {
+  color: var(--grey);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+.page-photography .client-project__action {
+  color: var(--teal);
+  white-space: nowrap;
+  font-size: .78rem;
+}
+.page-photography .client-project:hover img,
+.page-photography .client-project:focus-visible img { transform: scale(1.035); }
+.page-photography .client-project:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 5px;
+}
+@media (max-width: 768px) {
+  .page-photography .client-projects {
+    grid-template-columns: 1fr;
+  }
+  .page-photography .photo-jump-nav { gap: .4rem; }
+  .page-photography .photo-jump-nav__link {
+    font-size: .69rem;
+    padding: .65rem .82rem;
+  }
+}
+@media (max-width: 420px) {
+  .page-photography .client-project__info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .5rem;
+  }
+  .page-photography .photo-jump-nav { gap: .45rem; }
+  .page-photography .photo-jump-nav__link { min-height: 44px; }
+}
