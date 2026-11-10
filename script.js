@@ -40,19 +40,25 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.socials) {
     const s = SITE_CONFIG.socials;
 
-    // Instagram buttons
-    document.querySelectorAll('#footer-ig, #contact-ig').forEach(el => {
-      el.setAttribute('href', s.instagram);
-    });
+    // Open external social profiles in a separate tab, with safe link attributes.
+    const externalSocial = (selectors, url) => {
+      document.querySelectorAll(selectors).forEach(el => {
+        if (!url || url === '#') {
+          el.hidden = true;
+          return;
+        }
+        el.href = url;
+        el.target = '_blank';
+        el.rel = 'noopener noreferrer';
+        el.removeAttribute('hidden');
+      });
+    };
 
-    // YouTube buttons
-    document.querySelectorAll('#footer-yt, #contact-yt').forEach(el => {
-      el.setAttribute('href', s.youtube);
-    });
+    externalSocial('#footer-ig, #contact-ig', s.instagram);
+    externalSocial('#footer-yt, #contact-yt', s.youtube);
 
-    // WhatsApp button
-    const waBtn = document.getElementById('contact-wa');
-    if (waBtn) waBtn.setAttribute('href', s.whatsapp);
+    // Hide WhatsApp until the reserved username actually has an active contact URL.
+    externalSocial('#contact-wa', s.whatsapp);
   }
 
   /* -------- Dynamic Media Rendering (from site-config.js) -------- */
