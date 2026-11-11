@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://romainvrnx.netlify.app/sitemap.xml

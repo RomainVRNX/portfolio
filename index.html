@@ -5,7 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>Romain Vernay — Ocean Filmmaker</title>
+  <link rel="canonical" href="https://romainvrnx.netlify.app/">
   <meta name="description" content="Romain Vernay — Underwater filmmaker and photographer. Cinematic visual storytelling from the Philippines and beyond.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://romainvrnx.netlify.app/">
+  <meta property="og:title" content="Romain Vernay — Ocean Filmmaker">
+  <meta property="og:description" content="Romain Vernay — Underwater filmmaker and photographer. Cinematic visual storytelling from the Philippines and beyond.">
+  <meta property="og:image" content="https://romainvrnx.netlify.app/images/romain-vernay-social-alexandria.webp">
+  <meta property="og:image:type" content="image/webp">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Romain Vernay, Ocean Filmmaker, over an underwater photograph">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Romain Vernay — Ocean Filmmaker">
+  <meta name="twitter:description" content="Romain Vernay — Underwater filmmaker and photographer. Cinematic visual storytelling from the Philippines and beyond.">
+  <meta name="twitter:image" content="https://romainvrnx.netlify.app/images/romain-vernay-social-alexandria.webp">
+  <meta name="twitter:image:alt" content="Romain Vernay, Ocean Filmmaker, over an underwater photograph">
 
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -20,23 +35,23 @@
 
     <!-- Desktop nav -->
     <nav class="nav-desktop" id="nav-desktop">
-      <a href="index.html" class="nav-desktop__link nav-desktop__link--active">Home</a>
+      <a href="index.html" class="nav-desktop__link nav-desktop__link--active" aria-current="page">Home</a>
       <a href="work.html" class="nav-desktop__link">Work</a>
       <a href="the-journey.html" class="nav-desktop__link">The Journey</a>
       <a href="contact.html" class="nav-desktop__link">Contact</a>
     </nav>
 
     <!-- Hamburger -->
-    <div class="hamburger" id="hamburger" aria-label="Toggle navigation">
+    <button type="button" class="hamburger" id="hamburger" aria-controls="nav-mobile" aria-expanded="false" aria-label="Toggle navigation">
       <span></span>
       <span></span>
       <span></span>
-    </div>
+    </button>
   </header>
 
   <!-- Mobile overlay -->
-  <nav class="nav-mobile" id="nav-mobile">
-    <a href="index.html" class="nav-mobile__link">Home</a>
+  <nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
+    <a href="index.html" class="nav-mobile__link" aria-current="page">Home</a>
     <a href="work.html" class="nav-mobile__link">Work</a>
     <a href="the-journey.html" class="nav-mobile__link">The Journey</a>
     <a href="contact.html" class="nav-mobile__link">Contact</a>
@@ -44,13 +59,11 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero" id="hero">
-    <video class="hero__video" autoplay loop muted playsinline preload="metadata"
-           poster="images/hero-poster.webp" aria-hidden="true">
-      <!-- The browser selects one source for the viewport; it does not download all three. -->
-      <source src="images/hero-ocean-mobile.mp4" media="(max-width: 768px)" type='video/mp4; codecs="avc1"'>
-      <source src="images/hero-ocean-h265.mp4" media="(min-width: 769px)" type='video/mp4; codecs="hvc1"'>
-      <source src="images/hero-ocean-h264.mp4" media="(min-width: 769px)" type='video/mp4; codecs="avc1"'>
-    </video>
+    <video class="hero__video" loop muted playsinline preload="none"
+           poster="images/hero-poster.webp" aria-hidden="true"></video>
+    <button class="hero__playback" type="button" hidden aria-label="Play background video">
+      <span aria-hidden="true">▶</span>
+    </button>
     <div class="hero__overlay"></div>
     <div class="hero__color-grade"></div>
 
@@ -135,10 +148,10 @@
   </footer>
 
   <!-- ===== VIDEO MODAL ===== -->
-  <div class="video-modal" id="video-modal">
+  <dialog class="video-modal" id="video-modal" aria-label="Film player">
     <button class="video-modal__close" id="video-modal-close" aria-label="Close video">✕</button>
     <div class="video-modal__wrapper" id="video-modal-wrapper"></div>
-  </div>
+  </dialog>
 
   <script src="site-config.js"></script>
   <script src="script.js"></script>

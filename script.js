@@ -9,13 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const navMobile = document.getElementById('nav-mobile');
 
   if (hamburger && navMobile) {
-    // The menu icon is a div in the original markup: make it keyboard accessible.
-    hamburger.setAttribute('role', 'button');
-    hamburger.setAttribute('tabindex', '0');
-    hamburger.setAttribute('aria-controls', 'nav-mobile');
-    hamburger.setAttribute('aria-expanded', 'false');
-    navMobile.setAttribute('aria-label', 'Mobile navigation');
     navMobile.inert = true;
+    document.documentElement.classList.add('mobile-nav-enabled');
 
     const setMobileMenu = (open) => {
       hamburger.classList.toggle('open', open);
@@ -23,21 +18,31 @@ document.addEventListener('DOMContentLoaded', () => {
       navMobile.inert = !open;
       hamburger.setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('mobile-menu-open', open);
+      if (open) navMobile.querySelector('a')?.focus();
     };
     hamburger.addEventListener('click', () => {
-      setMobileMenu(!navMobile.classList.contains('open'));
-    });
-    hamburger.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        setMobileMenu(!navMobile.classList.contains('open'));
-      }
+      const open = !navMobile.classList.contains('open');
+      setMobileMenu(open);
+      if (!open) hamburger.focus();
     });
     navMobile.querySelectorAll('.nav-mobile__link').forEach(link => {
       link.addEventListener('click', () => setMobileMenu(false));
     });
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && navMobile.classList.contains('open')) {
+      if (!navMobile.classList.contains('open')) return;
+      const links = navMobile.querySelectorAll('a');
+      const lastLink = links[links.length - 1];
+      if (event.key === 'Tab') {
+        if ((!event.shiftKey && document.activeElement === lastLink) ||
+            (event.shiftKey && document.activeElement === links[0])) {
+          event.preventDefault();
+          hamburger.focus();
+        } else if (document.activeElement === hamburger) {
+          event.preventDefault();
+          (event.shiftKey ? lastLink : links[0])?.focus();
+        }
+      }
+      if (event.key === 'Escape') {
         setMobileMenu(false);
         hamburger.focus();
       }
@@ -90,32 +95,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -------- Dynamic Media Rendering (from site-config.js) -------- */
 
-  // 1. Home hero — native <source media> selection prevents the mobile browser
-  // from starting a 28 MB desktop download. Keep all file paths in site-config.js.
+  // Start the background video only when motion and data preferences allow it.
   const heroVideo = document.querySelector('.hero__video');
-  if (heroVideo && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroMedia) {
+  const heroPlayback = document.querySelector('.hero__playback');
+  if (heroVideo && heroPlayback && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroMedia) {
     const { mobile, hevc, avc, poster } = SITE_CONFIG.heroMedia;
     heroVideo.poster = poster;
-    const videoSources = heroVideo.querySelectorAll('source');
-    const wanted = [mobile, hevc, avc];
-    let changed = false;
-    videoSources.forEach((source, index) => {
-      if (wanted[index] && source.getAttribute('src') !== wanted[index]) {
-        source.setAttribute('src', wanted[index]);
-        changed = true;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileViewport = window.matchMedia('(max-width: 768px)');
+    const updatePlaybackButton = () => {
+      const paused = heroVideo.paused;
+      heroPlayback.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
+      heroPlayback.firstElementChild.textContent = paused ? '▶' : 'Ⅱ';
+    };
+    const play = () => {
+      if (!heroVideo.getAttribute('src')) {
+        heroVideo.src = mobileViewport.matches ? mobile
+          : heroVideo.canPlayType('video/mp4; codecs="hvc1"') ? hevc : avc;
+      }
+      heroVideo.play().catch(updatePlaybackButton);
+    };
+
+    heroVideo.addEventListener('play', updatePlaybackButton);
+    heroVideo.addEventListener('pause', updatePlaybackButton);
+    heroVideo.addEventListener('error', () => {
+      if (heroVideo.getAttribute('src') === hevc) {
+        heroVideo.src = avc;
+        play();
+      } else {
+        heroVideo.removeAttribute('src');
+        heroVideo.load();
+        updatePlaybackButton();
       }
     });
-    if (changed) heroVideo.load();
-
-    // Playback can still fail when a device advertises unsupported HEVC.
-    // Only then use the compatible desktop AVC fallback.
-    heroVideo.addEventListener('error', () => {
-      if (!avc || heroVideo.dataset.avcFallback === 'true') return;
-      heroVideo.dataset.avcFallback = 'true';
-      heroVideo.src = avc;
-      heroVideo.load();
-      heroVideo.play().catch(() => {});
+    heroPlayback.addEventListener('click', () => {
+      if (heroVideo.paused) play();
+      else heroVideo.pause();
     });
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) {
+        heroVideo.pause();
+        heroVideo.removeAttribute('src');
+        heroVideo.load();
+      }
+    });
+
+    heroPlayback.hidden = false;
+    if (!reducedMotion.matches && !navigator.connection?.saveData) play();
   }
 
   // 2. Hero Label (index.html)
@@ -193,76 +219,48 @@ document.addEventListener('DOMContentLoaded', () => {
      4. PHOTOGRAPHY — Editorial Masonry (2 Sections)
      ============================================ */
 
-  // Helper: populate a masonry container from a flat photo array
-  function buildEditorialMasonry(containerId, photos, allPhotos, globalOffset) {
-    const container = document.getElementById(containerId);
-    if (!container) return globalOffset;
+  const galleryLinks = [...document.querySelectorAll('.masonry a.masonry__item')];
 
-    container.innerHTML = '';
-
-    photos.forEach((photo, i) => {
-      const sizeClass = photo.size && photo.size !== 'normal' ? ` masonry__item--${photo.size}` : '';
-      const item = document.createElement('div');
-      item.className = `masonry__item${sizeClass}`;
-      item.id = `${containerId}-${i}`;
-      const src = photo.thumb || photo.src;
-      item.innerHTML = `<img src="${src}" alt="${photo.alt}" loading="lazy" decoding="async" data-full="${photo.src}">`;
-
-      const capturedIndex = globalOffset + i;
-      item.addEventListener('click', () => {
-        openLightbox(allPhotos, capturedIndex);
-      });
-
-      container.appendChild(item);
-    });
-
-    return globalOffset + photos.length;
-  }
-
-  // Check if we're on the photography page with editorial sections
-  const masonryUnderwater = document.getElementById('masonry-underwater');
-  const masonryExpeditions = document.getElementById('masonry-expeditions');
-
-  if ((masonryUnderwater || masonryExpeditions || document.getElementById('masonry-second-home')) && typeof SITE_CONFIG !== 'undefined') {
-    const uwPhotos = SITE_CONFIG.editorialUnderwater || [];
-    const expPhotos = SITE_CONFIG.editorialExpeditions || [];
-    const secondHomePhotos = document.getElementById('masonry-second-home') ? (SITE_CONFIG.secondHomePhotos || []) : [];
-    const allPhotos = secondHomePhotos.length ? secondHomePhotos : [...uwPhotos, ...expPhotos];
-
-    let offset = 0;
-    if (!secondHomePhotos.length) {
-      offset = buildEditorialMasonry('masonry-underwater', uwPhotos, allPhotos, offset);
-      offset = buildEditorialMasonry('masonry-expeditions', expPhotos, allPhotos, offset);
-    } else {
-      buildEditorialMasonry('masonry-second-home', secondHomePhotos, allPhotos, 0);
-    }
-
-    // --- Lightbox ---
+  if (galleryLinks.length) {
     const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-      let lbPhotos = [];
+    if (lightbox?.showModal) {
+      const lbPhotos = galleryLinks.map(link => ({ src: link.href, alt: link.querySelector('img').alt }));
       let lbIndex = 0;
       let imageRequest = 0;
 
       const lbImg = document.getElementById('lightbox-img');
       const lbCounter = document.getElementById('lightbox-counter');
 
-      window.openLightbox = function(photos, index) {
-        lbPhotos = photos;
+
+      function openLightbox(index) {
         lbIndex = index;
         lightbox.classList.add('lightbox--open');
+        lightbox.showModal();
         document.body.style.overflow = 'hidden';
         updateLightboxImage();
-      };
+      }
+
+      galleryLinks.forEach((link, index) => {
+        link.setAttribute('aria-haspopup', 'dialog');
+        link.addEventListener('click', event => {
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          openLightbox(index);
+        });
+      });
 
       function closeLightbox() {
+        lightbox.close();
+      }
+
+      lightbox.addEventListener('close', () => {
         // Invalidate any pending image load before the next opening.
         imageRequest++;
         lightbox.classList.remove('lightbox--open', 'lightbox--loading', 'lightbox--error');
         lbImg.removeAttribute('src');
         lbImg.alt = '';
         document.body.style.overflow = '';
-      }
+      });
 
       function updateLightboxImage() {
         const photo = lbPhotos[lbIndex];
@@ -279,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const incoming = new Image();
         incoming.onload = () => {
           // Rapid next/previous taps must not show out-of-order images.
-          if (request !== imageRequest || !lightbox.classList.contains('lightbox--open')) return;
+          if (request !== imageRequest || !lightbox.open) return;
           lbImg.alt = photo.alt || '';
           lbImg.src = photo.src;
           lightbox.classList.remove('lightbox--loading');
@@ -338,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       document.addEventListener('keydown', (e) => {
         if (!lightbox.classList.contains('lightbox--open')) return;
-        if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowLeft') lbPrev();
         if (e.key === 'ArrowRight') lbNext();
       });
@@ -350,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
      5. FILMMAKING — Cinematic Vertical Blocks
      ============================================ */
   const filmContainer = document.getElementById('film-projects-container');
-  if (filmContainer && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.filmProjects) {
+  if (filmContainer && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.filmProjects?.length) {
 
     filmContainer.innerHTML = '';
 
@@ -359,11 +356,13 @@ document.addEventListener('DOMContentLoaded', () => {
       block.className = 'film-block reveal';
       block.id = `film-${i + 1}`;
 
+      const isYouTubeFilm = project.mediaType === 'youtube' && project.link;
+
       // Build media HTML
       let mediaHTML = '';
       if (project.mediaType === 'video') {
         mediaHTML = `
-          <video class="film-block__video" controls preload="metadata" poster="${project.mediaSrc}">
+          <video class="film-block__video" controls preload="metadata">
             <source src="${project.mediaSrc}" type="video/mp4">
           </video>`;
       } else {
@@ -376,21 +375,25 @@ document.addEventListener('DOMContentLoaded', () => {
         : '';
 
       block.innerHTML = `
-        <a href="${project.link || '#'}" class="film-block__media-link">
-          <div class="film-block__media">
+        ${project.link && project.mediaType !== 'video' ? `<a href="${project.link}" class="film-block__media-link"${isYouTubeFilm ? ` aria-label="Watch Film: ${project.title}"` : ''}>` : ''}
+          <div class="film-block__media${isYouTubeFilm ? ' film-block__media--youtube' : ''}">
             ${mediaHTML}
             <div class="film-block__media-overlay"></div>
             <div class="film-block__play">
               <svg viewBox="0 0 24 24" width="48" height="48"><polygon points="6,3 20,12 6,21" fill="currentColor"/></svg>
             </div>
           </div>
-        </a>
+        ${project.link && project.mediaType !== 'video' ? '</a>' : ''}
         <div class="film-block__info">
           <div class="film-block__info-inner">
             <h2 class="film-block__title">${project.title}</h2>
             <p class="film-block__meta">${project.meta}</p>
             <p class="film-block__description">${project.description || ''}</p>
-            <div class="film-block__roles">${rolesHTML}</div>
+            ${rolesHTML ? `<div class="film-block__roles">${rolesHTML}</div>` : ''}
+            ${isYouTubeFilm ? `<div class="film-block__actions">
+              <a class="btn btn--ghost" href="${project.link}">Watch Film</a>
+              <a class="film-block__fallback" href="${project.link}" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+            </div>` : ''}
           </div>
         </div>
       `;
@@ -400,90 +403,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  /* ============================================
-     6. THE JOURNEY — Scrollytelling
-     ============================================ */
-  const journeyScenesContainer = document.getElementById('journey-scenes');
-  if (journeyScenesContainer && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.journey) {
-    const j = SITE_CONFIG.journey;
-
-    const openingEl = document.getElementById('journey-opening-content');
-    if (openingEl && j.opening) {
-      openingEl.innerHTML = `
-        <p class="journey-opening__kicker">${j.opening.kicker}</p>
-        <h1 class="journey-opening__title">${j.opening.title} <em>${j.opening.titleEmphasis}</em></h1>
-        <div class="journey-opening__divider"></div>
-      `;
-    }
-
-    journeyScenesContainer.innerHTML = '';
-    j.scenes.forEach((scene, i) => {
-      const section = document.createElement('section');
-      
-      // FORÇAGE DU QUINCONCE : Inversion une scène sur deux
-      const isReverse = i % 2 !== 0;
-      section.className = `journey-scene${isReverse ? ' journey-scene--reverse' : ''}`;
-      section.id = `scene-${i + 1}`;
-
-      let mediaHTML = '';
-      if (scene.mediaSrc) {
-        if (scene.mediaType === 'video') {
-          mediaHTML = `<video class="journey-scene__video" autoplay loop muted playsinline>
-            <source src="${scene.mediaSrc}" type="video/mp4">
-          </video>`;
-        } else {
-          mediaHTML = `<img src="${scene.mediaSrc}" alt="${scene.mediaAlt || ''}" loading="lazy" class="journey-scene__img">`;
-        }
-      } else {
-        const isVideo = scene.mediaType === 'video';
-        const iconClass = scene.mediaIcon || (isVideo ? 'fa-video' : 'fa-image');
-        const videoClass = isVideo ? ' journey-scene__placeholder--video' : '';
-        mediaHTML = `<div class="journey-scene__placeholder${videoClass}" id="media-scene-${i + 1}">
-          <i class="fa-solid ${iconClass}"></i>
-          <span>${scene.mediaLabel || (isVideo ? 'Video' : 'Photo')}</span>
-        </div>`;
-      }
-
-      section.innerHTML = `
-        <div class="journey-scene__inner">
-          <div class="journey-scene__media reveal">
-            ${mediaHTML}
-          </div>
-          <div class="journey-scene__content reveal">
-            <h2 class="journey-scene__title">${scene.title}</h2>
-            <div class="journey-scene__line"></div>
-            <p class="journey-scene__text">${scene.text}</p>
-          </div>
-        </div>
-      `;
-
-      journeyScenesContainer.appendChild(section);
-
-      // AJOUT DE L'ANIMATION ENTRE LES CHAPITRES
-      if (i < j.scenes.length - 1) {
-        const separator = document.createElement('div');
-        separator.className = 'scene-separator reveal';
-        separator.innerHTML = `<div class="custom-scroll-line"></div>`;
-        journeyScenesContainer.appendChild(separator);
-      }
+  document.querySelectorAll('.journey-scene__video').forEach(video => {
+    const button = video.nextElementSibling;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let manuallyPaused = false;
+    const updateButton = () => {
+      button.setAttribute('aria-label', video.paused ? 'Play scene video' : 'Pause scene video');
+      button.firstElementChild.textContent = video.paused ? '▶' : 'Ⅱ';
+    };
+    const play = () => video.play().catch(updateButton);
+    video.addEventListener('play', updateButton);
+    video.addEventListener('pause', updateButton);
+    button.addEventListener('click', () => {
+      manuallyPaused = !video.paused;
+      if (manuallyPaused) video.pause();
+      else play();
     });
-
-    const finaleEl = document.getElementById('journey-finale-content');
-    if (finaleEl && j.finale) {
-      finaleEl.innerHTML = `
-        <p class="journey-finale__line1">${j.finale.line1}</p>
-        <p class="journey-finale__line2">${j.finale.line2}</p>
-      `;
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) video.pause();
+    });
+    button.hidden = false;
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) video.pause();
+        else if (!manuallyPaused && !reducedMotion.matches && !navigator.connection?.saveData) play();
+      }, { threshold: 0.25 });
+      observer.observe(video);
     }
-
-    const ctaEl = document.getElementById('journey-cta');
-    if (ctaEl && j.cta) {
-      ctaEl.innerHTML = `
-        <p class="contact-strip__text">${j.cta.text}</p>
-        <a href="${j.cta.link}" class="btn btn--orange" id="cta-journey-contact">${j.cta.button}</a>
-      `;
-    }
-  }
+  });
 
   /* ============================================
      7. VIDEO MODAL — YouTube Lightbox
@@ -492,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const videoModalWrapper = document.getElementById('video-modal-wrapper');
   const videoModalClose = document.getElementById('video-modal-close');
 
-  if (videoModal && videoModalWrapper) {
+  if (videoModal?.showModal && videoModalWrapper) {
 
     /**
      * Extract YouTube video ID from any URL format using Regex.
@@ -516,12 +463,12 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Build a secure YouTube embed URL from a raw YouTube link.
      * Extracts the video ID via regex, then constructs:
-     * https://www.youtube.com/embed/[ID]?autoplay=1&rel=0&showinfo=0
+     * https://www.youtube.com/embed/[ID]?autoplay=0&rel=0&showinfo=0
      */
     function buildEmbedUrl(youtubeUrl) {
       const videoId = extractYouTubeId(youtubeUrl);
       if (!videoId) return null;
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&showinfo=0`;
+      return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&showinfo=0`;
     }
 
     // Check if a URL is a YouTube link
@@ -536,25 +483,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const iframe = document.createElement('iframe');
       iframe.setAttribute('src', embedUrl);
-      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+      iframe.setAttribute('allow', 'encrypted-media; picture-in-picture');
       iframe.setAttribute('allowfullscreen', '');
       iframe.setAttribute('title', 'Video player');
 
       videoModalWrapper.innerHTML = '';
       videoModalWrapper.appendChild(iframe);
       videoModal.classList.add('video-modal--open');
+      videoModal.showModal();
       document.body.style.overflow = 'hidden';
     }
 
     // Close the video modal and stop playback
     function closeVideoModal() {
-      videoModal.classList.remove('video-modal--open');
-      document.body.style.overflow = '';
-      // Destroy iframe after transition to stop video immediately
-      setTimeout(() => {
-        videoModalWrapper.innerHTML = '';
-      }, 350);
+      videoModal.close();
     }
+
+    videoModal.addEventListener('close', () => {
+      videoModal.classList.remove('video-modal--open');
+      videoModalWrapper.replaceChildren();
+      document.body.style.overflow = '';
+    });
 
     // Close button
     videoModalClose.addEventListener('click', closeVideoModal);
@@ -564,16 +513,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === videoModal) closeVideoModal();
     });
 
-    // Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && videoModal.classList.contains('video-modal--open')) {
-        closeVideoModal();
-      }
-    });
 
     // Intercept clicks on YouTube links — event delegation on the whole document
     document.addEventListener('click', (e) => {
       // Find the closest anchor tag
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const anchor = e.target.closest('a[href]');
       if (!anchor) return;
 
@@ -591,7 +535,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -------- Scroll Reveal (fade-in) -------- */
   const reveals = document.querySelectorAll('.reveal');
-  if (reveals.length) {
+  if (reveals.length && 'IntersectionObserver' in window &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('reveal-enabled');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
