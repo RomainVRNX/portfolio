@@ -9,16 +9,48 @@ document.addEventListener('DOMContentLoaded', () => {
   const navMobile = document.getElementById('nav-mobile');
 
   if (hamburger && navMobile) {
-    hamburger.addEventListener('click', () => {
-      hamburger.classList.toggle('open');
-      navMobile.classList.toggle('open');
-    });
+    navMobile.inert = true;
+    document.documentElement.classList.add('mobile-nav-enabled');
 
+    const setMobileMenu = (open) => {
+      hamburger.classList.toggle('open', open);
+      navMobile.classList.toggle('open', open);
+      navMobile.inert = !open;
+      hamburger.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('mobile-menu-open', open);
+      if (open) navMobile.querySelector('a')?.focus();
+    };
+    hamburger.addEventListener('click', () => {
+      const open = !navMobile.classList.contains('open');
+      setMobileMenu(open);
+      if (!open) hamburger.focus();
+    });
     navMobile.querySelectorAll('.nav-mobile__link').forEach(link => {
-      link.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        navMobile.classList.remove('open');
-      });
+      link.addEventListener('click', () => setMobileMenu(false));
+    });
+    document.addEventListener('keydown', (event) => {
+      if (!navMobile.classList.contains('open')) return;
+      const links = navMobile.querySelectorAll('a');
+      const lastLink = links[links.length - 1];
+      if (event.key === 'Tab') {
+        if ((!event.shiftKey && document.activeElement === lastLink) ||
+            (event.shiftKey && document.activeElement === links[0])) {
+          event.preventDefault();
+          hamburger.focus();
+        } else if (document.activeElement === hamburger) {
+          event.preventDefault();
+          (event.shiftKey ? lastLink : links[0])?.focus();
+        }
+      }
+      if (event.key === 'Escape') {
+        setMobileMenu(false);
+        hamburger.focus();
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900 && navMobile.classList.contains('open')) {
+        setMobileMenu(false);
+      }
     });
   }
 
@@ -40,31 +72,76 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.socials) {
     const s = SITE_CONFIG.socials;
 
-    // Instagram buttons
-    document.querySelectorAll('#footer-ig, #contact-ig').forEach(el => {
-      el.setAttribute('href', s.instagram);
-    });
+    // Open external social profiles in a separate tab, with safe link attributes.
+    const externalSocial = (selectors, url) => {
+      document.querySelectorAll(selectors).forEach(el => {
+        if (!url || url === '#') {
+          el.hidden = true;
+          return;
+        }
+        el.href = url;
+        el.target = '_blank';
+        el.rel = 'noopener noreferrer';
+        el.removeAttribute('hidden');
+      });
+    };
 
-    // YouTube buttons
-    document.querySelectorAll('#footer-yt, #contact-yt').forEach(el => {
-      el.setAttribute('href', s.youtube);
-    });
+    externalSocial('#footer-ig, #contact-ig', s.instagram);
+    externalSocial('#footer-yt, #contact-yt', s.youtube);
 
-    // WhatsApp button
-    const waBtn = document.getElementById('contact-wa');
-    if (waBtn) waBtn.setAttribute('href', s.whatsapp);
+    // Hide WhatsApp until the reserved username actually has an active contact URL.
+    externalSocial('#contact-wa', s.whatsapp);
   }
 
   /* -------- Dynamic Media Rendering (from site-config.js) -------- */
 
-  // 1. Hero Video (index.html)
+  // Start the background video only when motion and data preferences allow it.
   const heroVideo = document.querySelector('.hero__video');
-  if (heroVideo && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroVideo) {
-    const source = heroVideo.querySelector('source');
-    if (source) {
-      source.setAttribute('src', SITE_CONFIG.heroVideo);
-      heroVideo.load();
-    }
+  const heroPlayback = document.querySelector('.hero__playback');
+  if (heroVideo && heroPlayback && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.heroMedia) {
+    const { mobile, hevc, avc, poster } = SITE_CONFIG.heroMedia;
+    heroVideo.poster = poster;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileViewport = window.matchMedia('(max-width: 768px)');
+    const updatePlaybackButton = () => {
+      const paused = heroVideo.paused;
+      heroPlayback.setAttribute('aria-label', paused ? 'Play background video' : 'Pause background video');
+      heroPlayback.firstElementChild.textContent = paused ? '▶' : 'Ⅱ';
+    };
+    const play = () => {
+      if (!heroVideo.getAttribute('src')) {
+        heroVideo.src = mobileViewport.matches ? mobile
+          : heroVideo.canPlayType('video/mp4; codecs="hvc1"') ? hevc : avc;
+      }
+      heroVideo.play().catch(updatePlaybackButton);
+    };
+
+    heroVideo.addEventListener('play', updatePlaybackButton);
+    heroVideo.addEventListener('pause', updatePlaybackButton);
+    heroVideo.addEventListener('error', () => {
+      if (heroVideo.getAttribute('src') === hevc) {
+        heroVideo.src = avc;
+        play();
+      } else {
+        heroVideo.removeAttribute('src');
+        heroVideo.load();
+        updatePlaybackButton();
+      }
+    });
+    heroPlayback.addEventListener('click', () => {
+      if (heroVideo.paused) play();
+      else heroVideo.pause();
+    });
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) {
+        heroVideo.pause();
+        heroVideo.removeAttribute('src');
+        heroVideo.load();
+      }
+    });
+
+    heroPlayback.hidden = false;
+    if (!reducedMotion.matches && !navigator.connection?.saveData) play();
   }
 
   // 2. Hero Label (index.html)
@@ -85,9 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <a href="${project.link || '#'}" class="work-card__link" style="text-decoration:none;color:inherit;display:block;">
           <div class="work-card__thumb" style="background-image: url('${project.thumbnail}');">
-            <div class="work-card__play">
-              <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
-            </div>
+
           </div>
           <div class="work-card__body">
             <span class="work-card__tag">${project.tag}</span>
@@ -101,75 +176,119 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
+  // Photography — scalable commissioned project cards.
+  const clientProjectsGrid = document.getElementById('client-projects');
+  if (clientProjectsGrid && typeof SITE_CONFIG !== 'undefined' && Array.isArray(SITE_CONFIG.clientProjects)) {
+    clientProjectsGrid.innerHTML = '';
+    SITE_CONFIG.clientProjects.forEach((project) => {
+      const card = document.createElement('a');
+      card.className = 'client-project';
+      card.href = project.link;
+      card.setAttribute('aria-label', 'View ' + project.title + ' photography project');
+      const image = document.createElement('div');
+      image.className = 'client-project__image';
+      const img = document.createElement('img');
+      img.src = project.cover;
+      img.alt = project.alt || project.title;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      const overlay = document.createElement('span');
+      overlay.className = 'client-project__overlay';
+      overlay.textContent = 'View Project ↗';
+      image.append(img, overlay);
+      const info = document.createElement('div');
+      info.className = 'client-project__info';
+      const labels = document.createElement('div');
+      const title = document.createElement('h3');
+      title.className = 'client-project__title';
+      title.textContent = project.title;
+      const meta = document.createElement('p');
+      meta.className = 'client-project__meta';
+      meta.textContent = [project.category, project.location].filter(Boolean).join(' · ');
+      labels.append(title, meta);
+      const action = document.createElement('span');
+      action.className = 'client-project__action';
+      action.textContent = 'View Project ↗';
+      info.append(labels, action);
+      card.append(image, info);
+      clientProjectsGrid.appendChild(card);
+    });
+  }
+
   /* ============================================
      4. PHOTOGRAPHY — Editorial Masonry (2 Sections)
      ============================================ */
 
-  // Helper: populate a masonry container from a flat photo array
-  function buildEditorialMasonry(containerId, photos, allPhotos, globalOffset) {
-    const container = document.getElementById(containerId);
-    if (!container) return globalOffset;
+  const galleryLinks = [...document.querySelectorAll('.masonry a.masonry__item')];
 
-    container.innerHTML = '';
-
-    photos.forEach((photo, i) => {
-      const sizeClass = photo.size && photo.size !== 'normal' ? ` masonry__item--${photo.size}` : '';
-      const item = document.createElement('div');
-      item.className = `masonry__item${sizeClass}`;
-      item.id = `${containerId}-${i}`;
-      item.innerHTML = `<img src="${photo.src}" alt="${photo.alt}" loading="lazy">`;
-
-      const capturedIndex = globalOffset + i;
-      item.addEventListener('click', () => {
-        openLightbox(allPhotos, capturedIndex);
-      });
-
-      container.appendChild(item);
-    });
-
-    return globalOffset + photos.length;
-  }
-
-  // Check if we're on the photography page with editorial sections
-  const masonryUnderwater = document.getElementById('masonry-underwater');
-  const masonryExpeditions = document.getElementById('masonry-expeditions');
-
-  if ((masonryUnderwater || masonryExpeditions) && typeof SITE_CONFIG !== 'undefined') {
-    const uwPhotos = SITE_CONFIG.editorialUnderwater || [];
-    const expPhotos = SITE_CONFIG.editorialExpeditions || [];
-    const allPhotos = [...uwPhotos, ...expPhotos];
-
-    let offset = 0;
-    offset = buildEditorialMasonry('masonry-underwater', uwPhotos, allPhotos, offset);
-    offset = buildEditorialMasonry('masonry-expeditions', expPhotos, allPhotos, offset);
-
-    // --- Lightbox ---
+  if (galleryLinks.length) {
     const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-      let lbPhotos = [];
+    if (lightbox?.showModal) {
+      const lbPhotos = galleryLinks.map(link => ({ src: link.href, alt: link.querySelector('img').alt }));
       let lbIndex = 0;
+      let imageRequest = 0;
 
       const lbImg = document.getElementById('lightbox-img');
       const lbCounter = document.getElementById('lightbox-counter');
 
-      window.openLightbox = function(photos, index) {
-        lbPhotos = photos;
+
+      function openLightbox(index) {
         lbIndex = index;
-        updateLightboxImage();
         lightbox.classList.add('lightbox--open');
+        lightbox.showModal();
         document.body.style.overflow = 'hidden';
-      };
+        updateLightboxImage();
+      }
+
+      galleryLinks.forEach((link, index) => {
+        link.setAttribute('aria-haspopup', 'dialog');
+        link.addEventListener('click', event => {
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          event.preventDefault();
+          openLightbox(index);
+        });
+      });
 
       function closeLightbox() {
-        lightbox.classList.remove('lightbox--open');
-        document.body.style.overflow = '';
+        lightbox.close();
       }
+
+      lightbox.addEventListener('close', () => {
+        // Invalidate any pending image load before the next opening.
+        imageRequest++;
+        lightbox.classList.remove('lightbox--open', 'lightbox--loading', 'lightbox--error');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
+        document.body.style.overflow = '';
+      });
 
       function updateLightboxImage() {
         const photo = lbPhotos[lbIndex];
-        lbImg.setAttribute('src', photo.src);
-        lbImg.setAttribute('alt', photo.alt);
+        if (!photo) return;
+
+        // Never show the previous picture while the new one is loading.
+        const request = ++imageRequest;
+        lightbox.classList.remove('lightbox--error');
+        lightbox.classList.add('lightbox--loading');
+        lbImg.removeAttribute('src');
+        lbImg.alt = '';
         lbCounter.textContent = `${lbIndex + 1} / ${lbPhotos.length}`;
+
+        const incoming = new Image();
+        incoming.onload = () => {
+          // Rapid next/previous taps must not show out-of-order images.
+          if (request !== imageRequest || !lightbox.open) return;
+          lbImg.alt = photo.alt || '';
+          lbImg.src = photo.src;
+          lightbox.classList.remove('lightbox--loading');
+        };
+        incoming.onerror = () => {
+          if (request !== imageRequest || !lightbox.classList.contains('lightbox--open')) return;
+          lightbox.classList.remove('lightbox--loading');
+          lightbox.classList.add('lightbox--error');
+          lbCounter.textContent = 'Image unavailable — try another photo';
+        };
+        incoming.src = photo.src;
       }
 
       function lbPrev() {
@@ -186,13 +305,37 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('lightbox-prev').addEventListener('click', lbPrev);
       document.getElementById('lightbox-next').addEventListener('click', lbNext);
 
+      // Native-feeling photo navigation on touchscreens; ignore vertical scroll.
+      let touchStart = null;
+      lightbox.addEventListener('touchstart', (event) => {
+        if (!lightbox.classList.contains('lightbox--open') || event.touches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        const touch = event.touches[0];
+        touchStart = { x: touch.clientX, y: touch.clientY };
+      }, { passive: true });
+      lightbox.addEventListener('touchend', (event) => {
+        if (!touchStart || !lightbox.classList.contains('lightbox--open') || event.changedTouches.length !== 1) {
+          touchStart = null;
+          return;
+        }
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - touchStart.x;
+        const deltaY = touch.clientY - touchStart.y;
+        touchStart = null;
+        if (Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) {
+          if (deltaX < 0) lbNext();
+          else lbPrev();
+        }
+      }, { passive: true });
+
       lightbox.addEventListener('click', (e) => {
         if (e.target === lightbox) closeLightbox();
       });
 
       document.addEventListener('keydown', (e) => {
         if (!lightbox.classList.contains('lightbox--open')) return;
-        if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowLeft') lbPrev();
         if (e.key === 'ArrowRight') lbNext();
       });
@@ -204,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
      5. FILMMAKING — Cinematic Vertical Blocks
      ============================================ */
   const filmContainer = document.getElementById('film-projects-container');
-  if (filmContainer && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.filmProjects) {
+  if (filmContainer && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.filmProjects?.length) {
 
     filmContainer.innerHTML = '';
 
@@ -213,11 +356,13 @@ document.addEventListener('DOMContentLoaded', () => {
       block.className = 'film-block reveal';
       block.id = `film-${i + 1}`;
 
+      const isYouTubeFilm = project.mediaType === 'youtube' && project.link;
+
       // Build media HTML
       let mediaHTML = '';
       if (project.mediaType === 'video') {
         mediaHTML = `
-          <video class="film-block__video" controls preload="metadata" poster="${project.mediaSrc}">
+          <video class="film-block__video" controls preload="metadata">
             <source src="${project.mediaSrc}" type="video/mp4">
           </video>`;
       } else {
@@ -230,21 +375,25 @@ document.addEventListener('DOMContentLoaded', () => {
         : '';
 
       block.innerHTML = `
-        <a href="${project.link || '#'}" class="film-block__media-link">
-          <div class="film-block__media">
+        ${project.link && project.mediaType !== 'video' ? `<a href="${project.link}" class="film-block__media-link"${isYouTubeFilm ? ` aria-label="Watch Film: ${project.title}"` : ''}>` : ''}
+          <div class="film-block__media${isYouTubeFilm ? ' film-block__media--youtube' : ''}">
             ${mediaHTML}
             <div class="film-block__media-overlay"></div>
             <div class="film-block__play">
               <svg viewBox="0 0 24 24" width="48" height="48"><polygon points="6,3 20,12 6,21" fill="currentColor"/></svg>
             </div>
           </div>
-        </a>
+        ${project.link && project.mediaType !== 'video' ? '</a>' : ''}
         <div class="film-block__info">
           <div class="film-block__info-inner">
             <h2 class="film-block__title">${project.title}</h2>
             <p class="film-block__meta">${project.meta}</p>
             <p class="film-block__description">${project.description || ''}</p>
-            <div class="film-block__roles">${rolesHTML}</div>
+            ${rolesHTML ? `<div class="film-block__roles">${rolesHTML}</div>` : ''}
+            ${isYouTubeFilm ? `<div class="film-block__actions">
+              <a class="btn btn--ghost" href="${project.link}">Watch Film</a>
+              <a class="film-block__fallback" href="${project.link}" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
+            </div>` : ''}
           </div>
         </div>
       `;
@@ -254,90 +403,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  /* ============================================
-     6. THE JOURNEY — Scrollytelling
-     ============================================ */
-  const journeyScenesContainer = document.getElementById('journey-scenes');
-  if (journeyScenesContainer && typeof SITE_CONFIG !== 'undefined' && SITE_CONFIG.journey) {
-    const j = SITE_CONFIG.journey;
-
-    const openingEl = document.getElementById('journey-opening-content');
-    if (openingEl && j.opening) {
-      openingEl.innerHTML = `
-        <p class="journey-opening__kicker">${j.opening.kicker}</p>
-        <h1 class="journey-opening__title">${j.opening.title} <em>${j.opening.titleEmphasis}</em></h1>
-        <div class="journey-opening__divider"></div>
-      `;
-    }
-
-    journeyScenesContainer.innerHTML = '';
-    j.scenes.forEach((scene, i) => {
-      const section = document.createElement('section');
-      
-      // FORÇAGE DU QUINCONCE : Inversion une scène sur deux
-      const isReverse = i % 2 !== 0;
-      section.className = `journey-scene${isReverse ? ' journey-scene--reverse' : ''}`;
-      section.id = `scene-${i + 1}`;
-
-      let mediaHTML = '';
-      if (scene.mediaSrc) {
-        if (scene.mediaType === 'video') {
-          mediaHTML = `<video class="journey-scene__video" autoplay loop muted playsinline>
-            <source src="${scene.mediaSrc}" type="video/mp4">
-          </video>`;
-        } else {
-          mediaHTML = `<img src="${scene.mediaSrc}" alt="${scene.mediaAlt || ''}" loading="lazy" class="journey-scene__img">`;
-        }
-      } else {
-        const isVideo = scene.mediaType === 'video';
-        const iconClass = scene.mediaIcon || (isVideo ? 'fa-video' : 'fa-image');
-        const videoClass = isVideo ? ' journey-scene__placeholder--video' : '';
-        mediaHTML = `<div class="journey-scene__placeholder${videoClass}" id="media-scene-${i + 1}">
-          <i class="fa-solid ${iconClass}"></i>
-          <span>${scene.mediaLabel || (isVideo ? 'Video' : 'Photo')}</span>
-        </div>`;
-      }
-
-      section.innerHTML = `
-        <div class="journey-scene__inner">
-          <div class="journey-scene__media reveal">
-            ${mediaHTML}
-          </div>
-          <div class="journey-scene__content reveal">
-            <h2 class="journey-scene__title">${scene.title}</h2>
-            <div class="journey-scene__line"></div>
-            <p class="journey-scene__text">${scene.text}</p>
-          </div>
-        </div>
-      `;
-
-      journeyScenesContainer.appendChild(section);
-
-      // AJOUT DE L'ANIMATION ENTRE LES CHAPITRES
-      if (i < j.scenes.length - 1) {
-        const separator = document.createElement('div');
-        separator.className = 'scene-separator reveal';
-        separator.innerHTML = `<div class="custom-scroll-line"></div>`;
-        journeyScenesContainer.appendChild(separator);
-      }
+  document.querySelectorAll('.journey-scene__video').forEach(video => {
+    const button = video.nextElementSibling;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let manuallyPaused = false;
+    const updateButton = () => {
+      button.setAttribute('aria-label', video.paused ? 'Play scene video' : 'Pause scene video');
+      button.firstElementChild.textContent = video.paused ? '▶' : 'Ⅱ';
+    };
+    const play = () => video.play().catch(updateButton);
+    video.addEventListener('play', updateButton);
+    video.addEventListener('pause', updateButton);
+    button.addEventListener('click', () => {
+      manuallyPaused = !video.paused;
+      if (manuallyPaused) video.pause();
+      else play();
     });
-
-    const finaleEl = document.getElementById('journey-finale-content');
-    if (finaleEl && j.finale) {
-      finaleEl.innerHTML = `
-        <p class="journey-finale__line1">${j.finale.line1}</p>
-        <p class="journey-finale__line2">${j.finale.line2}</p>
-      `;
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) video.pause();
+    });
+    button.hidden = false;
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) video.pause();
+        else if (!manuallyPaused && !reducedMotion.matches && !navigator.connection?.saveData) play();
+      }, { threshold: 0.25 });
+      observer.observe(video);
     }
-
-    const ctaEl = document.getElementById('journey-cta');
-    if (ctaEl && j.cta) {
-      ctaEl.innerHTML = `
-        <p class="contact-strip__text">${j.cta.text}</p>
-        <a href="${j.cta.link}" class="btn btn--orange" id="cta-journey-contact">${j.cta.button}</a>
-      `;
-    }
-  }
+  });
 
   /* ============================================
      7. VIDEO MODAL — YouTube Lightbox
@@ -346,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const videoModalWrapper = document.getElementById('video-modal-wrapper');
   const videoModalClose = document.getElementById('video-modal-close');
 
-  if (videoModal && videoModalWrapper) {
+  if (videoModal?.showModal && videoModalWrapper) {
 
     /**
      * Extract YouTube video ID from any URL format using Regex.
@@ -370,12 +463,12 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Build a secure YouTube embed URL from a raw YouTube link.
      * Extracts the video ID via regex, then constructs:
-     * https://www.youtube.com/embed/[ID]?autoplay=1&rel=0&showinfo=0
+     * https://www.youtube.com/embed/[ID]?autoplay=0&rel=0&showinfo=0
      */
     function buildEmbedUrl(youtubeUrl) {
       const videoId = extractYouTubeId(youtubeUrl);
       if (!videoId) return null;
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&showinfo=0`;
+      return `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&showinfo=0`;
     }
 
     // Check if a URL is a YouTube link
@@ -390,25 +483,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const iframe = document.createElement('iframe');
       iframe.setAttribute('src', embedUrl);
-      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+      iframe.setAttribute('allow', 'encrypted-media; picture-in-picture');
       iframe.setAttribute('allowfullscreen', '');
       iframe.setAttribute('title', 'Video player');
 
       videoModalWrapper.innerHTML = '';
       videoModalWrapper.appendChild(iframe);
       videoModal.classList.add('video-modal--open');
+      videoModal.showModal();
       document.body.style.overflow = 'hidden';
     }
 
     // Close the video modal and stop playback
     function closeVideoModal() {
-      videoModal.classList.remove('video-modal--open');
-      document.body.style.overflow = '';
-      // Destroy iframe after transition to stop video immediately
-      setTimeout(() => {
-        videoModalWrapper.innerHTML = '';
-      }, 350);
+      videoModal.close();
     }
+
+    videoModal.addEventListener('close', () => {
+      videoModal.classList.remove('video-modal--open');
+      videoModalWrapper.replaceChildren();
+      document.body.style.overflow = '';
+    });
 
     // Close button
     videoModalClose.addEventListener('click', closeVideoModal);
@@ -418,20 +513,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === videoModal) closeVideoModal();
     });
 
-    // Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && videoModal.classList.contains('video-modal--open')) {
-        closeVideoModal();
-      }
-    });
 
     // Intercept clicks on YouTube links — event delegation on the whole document
     document.addEventListener('click', (e) => {
       // Find the closest anchor tag
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const anchor = e.target.closest('a[href]');
       if (!anchor) return;
 
       const href = anchor.getAttribute('href');
+      // Only portfolio films open in the player; social profile links open normally.
+      if (!anchor.closest('.film-block, .showreel') || anchor.target === '_blank') return;
       if (isYouTubeUrl(href)) {
         e.preventDefault();
         e.stopPropagation();
@@ -443,7 +535,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -------- Scroll Reveal (fade-in) -------- */
   const reveals = document.querySelectorAll('.reveal');
-  if (reveals.length) {
+  if (reveals.length && 'IntersectionObserver' in window &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('reveal-enabled');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
